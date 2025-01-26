@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background_color">
+    android:background="@color/background_color"
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,23 +16,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/playlist_maker"
-            android:textColor="@color/white"
-            android:textSize="22sp"
+            android:layout_marginStart="@dimen/_16dp"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="@dimen/_16dp"
-            android:layout_marginStart="@dimen/_16dp" />
+            android:fontFamily="@font/ysdisplay"
+            android:text="@string/playlist_maker"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_22sp" />
 
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="28dp"
         android:layout_marginLeft="@dimen/_16dp"
-        android:layout_marginRight="@dimen/_16dp">
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="@dimen/_16dp"
+        android:layout_marginBottom="28dp"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/search"
@@ -41,6 +42,8 @@
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/white"
+            android:fontFamily="@font/ysdisplay"
+            android:letterSpacing="0"
             android:text="@string/Search"
             android:textAllCaps="false"
             android:textColor="@color/black"
@@ -57,6 +60,8 @@
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/white"
+            android:fontFamily="@font/ysdisplay"
+            android:letterSpacing="0"
             android:text="@string/media"
             android:textAllCaps="false"
             android:textColor="@color/black"
@@ -64,7 +69,7 @@
             app:cornerRadius="@dimen/_16dp"
             app:icon="@drawable/media"
             app:iconGravity="textStart"
-            app:iconTint="@color/black"/>
+            app:iconTint="@color/black" />
 
         <Button
             android:id="@+id/settings"
@@ -72,6 +77,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="@color/white"
+            android:fontFamily="@font/ysdisplay"
+            android:letterSpacing="0"
             android:text="@string/settings"
             android:textAllCaps="false"
             android:textColor="@color/black"
@@ -79,9 +86,9 @@
             app:cornerRadius="@dimen/_16dp"
             app:icon="@drawable/settings"
             app:iconGravity="textStart"
-            app:iconTint="@color/black"/>
+            app:iconTint="@color/black" />
 
-</LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>
