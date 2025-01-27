@@ -51,7 +51,8 @@
             app:cornerRadius="@dimen/_16dp"
             app:icon="@drawable/search"
             app:iconGravity="textStart"
-            app:iconTint="@color/black" />
+            app:iconTint="@color/black"
+            tools:ignore="VisualLintButtonSize" />
 
         <Button
             android:id="@+id/media"
@@ -69,7 +70,8 @@
             app:cornerRadius="@dimen/_16dp"
             app:icon="@drawable/media"
             app:iconGravity="textStart"
-            app:iconTint="@color/black" />
+            app:iconTint="@color/black"
+            tools:ignore="VisualLintButtonSize" />
 
         <Button
             android:id="@+id/settings"
@@ -86,7 +88,8 @@
             app:cornerRadius="@dimen/_16dp"
             app:icon="@drawable/settings"
             app:iconGravity="textStart"
-            app:iconTint="@color/black" />
+            app:iconTint="@color/black"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 
