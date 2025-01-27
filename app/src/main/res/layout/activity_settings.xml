@@ -13,16 +13,16 @@
         android:layout_height="wrap_content"
         tools:ignore="UselessParent">
 
-        <Button
+        <ImageButton
             android:id="@+id/back"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_48dp"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
             android:importantForAccessibility="no"
+            android:backgroundTint="@color/white"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:stateListAnimator="@null"
-            app:icon="@drawable/back"
+            android:src="@drawable/back"
             app:iconTint="@color/black" />
 
         <TextView
@@ -41,11 +41,13 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        android:paddingStart="@dimen/_16dp"
+        android:paddingEnd="@dimen/_6dp">
 
         <Switch
             android:id="@+id/switch1"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
@@ -53,7 +55,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16dp"
             android:layout_marginTop="@dimen/_21dp"
             android:layout_marginEnd="@dimen/_100dp"
             android:layout_marginBottom="@dimen/_21dp"
@@ -66,12 +67,13 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_16dp"
+        android:paddingEnd="@dimen/_6dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16dp"
             android:layout_marginTop="@dimen/_21dp"
             android:layout_marginEnd="@dimen/_100dp"
             android:layout_marginBottom="@dimen/_21dp"
@@ -80,28 +82,30 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_16sp" />
 
-        <Button
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:layout_width="@dimen/_48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:backgroundTint="@color/white"
             android:importantForAccessibility="no"
             android:minWidth="0dp"
             android:minHeight="0dp"
+            android:src="@drawable/share"
             android:stateListAnimator="@null"
-            app:icon="@drawable/share"
-            app:iconTint="@color/settings_button" />
+            app:iconTint="@color/settings_button"
+            tools:ignore="ImageContrastCheck" />
 
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_16dp"
+        android:paddingEnd="@dimen/_6dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16dp"
             android:layout_marginTop="@dimen/_21dp"
             android:layout_marginEnd="@dimen/_100dp"
             android:layout_marginBottom="@dimen/_21dp"
@@ -110,28 +114,30 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_16sp" />
 
-        <Button
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:layout_width="@dimen/_48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:backgroundTint="@color/white"
             android:importantForAccessibility="no"
             android:minWidth="0dp"
             android:minHeight="0dp"
+            android:src="@drawable/support"
             android:stateListAnimator="@null"
-            app:icon="@drawable/support"
-            app:iconTint="@color/settings_button" />
+            app:iconTint="@color/settings_button"
+            tools:ignore="ImageContrastCheck" />
 
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_16dp"
+        android:paddingEnd="@dimen/_6dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16dp"
             android:layout_marginTop="@dimen/_21dp"
             android:layout_marginEnd="@dimen/_100dp"
             android:layout_marginBottom="@dimen/_21dp"
@@ -140,17 +146,18 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_16sp" />
 
-        <Button
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:layout_width="@dimen/_48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:backgroundTint="@color/white"
             android:importantForAccessibility="no"
             android:minWidth="0dp"
             android:minHeight="0dp"
+            android:src="@drawable/forward"
             android:stateListAnimator="@null"
-            app:icon="@drawable/forward"
-            app:iconTint="@color/settings_button" />
+            app:iconTint="@color/settings_button"
+            tools:ignore="ImageContrastCheck" />
 
     </FrameLayout>
 
