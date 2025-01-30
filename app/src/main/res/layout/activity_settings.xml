@@ -8,157 +8,80 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationIcon="@drawable/back"
+        app:title="@string/settings" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:ignore="UselessParent">
-
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="@dimen/_48dp"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no"
-            android:backgroundTint="@color/white"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:stateListAnimator="@null"
-            android:src="@drawable/back"
-            app:iconTint="@color/black" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="@dimen/_16dp"
-            android:fontFamily="@font/ysdisplay"
-            android:text="@string/settings"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_22sp" />
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:paddingStart="@dimen/_16dp"
-        android:paddingEnd="@dimen/_6dp">
+        android:minHeight="@dimen/_61dp"
+        android:orientation="horizontal">
 
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="@dimen/_48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_21dp"
-            android:layout_marginEnd="@dimen/_100dp"
-            android:layout_marginBottom="@dimen/_21dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_16dp"
+            android:layout_weight="1"
             android:fontFamily="@font/ysdisplay"
             android:text="@string/dark_theme"
             android:textColor="@color/black"
             android:textSize="@dimen/_16sp" />
 
-    </FrameLayout>
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="6dp"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-    <FrameLayout
+    </LinearLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/ysdisplay"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/_61dp"
         android:paddingStart="@dimen/_16dp"
-        android:paddingEnd="@dimen/_6dp">
+        android:paddingEnd="@dimen/_12dp"
+        android:text="@string/share"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_16sp"
+        app:drawableEndCompat="@drawable/share" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_21dp"
-            android:layout_marginEnd="@dimen/_100dp"
-            android:layout_marginBottom="@dimen/_21dp"
-            android:fontFamily="@font/ysdisplay"
-            android:text="@string/share"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_16sp" />
-
-        <ImageButton
-            android:layout_width="@dimen/_48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:backgroundTint="@color/white"
-            android:importantForAccessibility="no"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:src="@drawable/share"
-            android:stateListAnimator="@null"
-            app:iconTint="@color/settings_button"
-            tools:ignore="ImageContrastCheck" />
-
-    </FrameLayout>
-
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/ysdisplay"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/_61dp"
         android:paddingStart="@dimen/_16dp"
-        android:paddingEnd="@dimen/_6dp">
+        android:paddingEnd="@dimen/_12dp"
+        android:text="@string/support"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_16sp"
+        app:drawableEndCompat="@drawable/support" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_21dp"
-            android:layout_marginEnd="@dimen/_100dp"
-            android:layout_marginBottom="@dimen/_21dp"
-            android:fontFamily="@font/ysdisplay"
-            android:text="@string/support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_16sp" />
-
-        <ImageButton
-            android:layout_width="@dimen/_48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:backgroundTint="@color/white"
-            android:importantForAccessibility="no"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:src="@drawable/support"
-            android:stateListAnimator="@null"
-            app:iconTint="@color/settings_button"
-            tools:ignore="ImageContrastCheck" />
-
-    </FrameLayout>
-
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/ysdisplay"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/_61dp"
         android:paddingStart="@dimen/_16dp"
-        android:paddingEnd="@dimen/_6dp">
+        android:paddingEnd="@dimen/_12dp"
+        android:text="@string/agreement"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_16sp"
+        app:drawableEndCompat="@drawable/forward" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_21dp"
-            android:layout_marginEnd="@dimen/_100dp"
-            android:layout_marginBottom="@dimen/_21dp"
-            android:fontFamily="@font/ysdisplay"
-            android:text="@string/agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_16sp" />
-
-        <ImageButton
-            android:layout_width="@dimen/_48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:backgroundTint="@color/white"
-            android:importantForAccessibility="no"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:src="@drawable/forward"
-            android:stateListAnimator="@null"
-            app:iconTint="@color/settings_button"
-            tools:ignore="ImageContrastCheck" />
-
-    </FrameLayout>
 
 </LinearLayout>
