@@ -30,7 +30,6 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/_16dp"
             android:layout_weight="1"
-            android:fontFamily="@font/ysdisplay"
             android:text="@string/dark_theme"
             android:textColor="@color/black"
             android:textSize="@dimen/_16sp" />
@@ -48,7 +47,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/ysdisplay"
         android:gravity="center_vertical"
         android:minHeight="@dimen/_61dp"
         android:paddingStart="@dimen/_16dp"
@@ -61,7 +59,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/ysdisplay"
         android:gravity="center_vertical"
         android:minHeight="@dimen/_61dp"
         android:paddingStart="@dimen/_16dp"
@@ -74,7 +71,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/ysdisplay"
         android:gravity="center_vertical"
         android:minHeight="@dimen/_61dp"
         android:paddingStart="@dimen/_16dp"
