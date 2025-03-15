@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="activityMainBackground">#1A1B22</color>
+    <color name="activitySecondaryBackground">#1A1B22</color>
+
+    <color name="settingsTextColor">#FFFFFF</color>
+    <color name="settingsIcons">#FFFFFF</color>
+
+    <color name="editTextBackground">#FFFFFF</color>
+    <color name="editTextIcon">#1A1B22</color>
+</resources>

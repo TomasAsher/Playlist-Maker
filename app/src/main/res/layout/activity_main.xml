@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimaryVariant"
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
@@ -14,8 +13,7 @@
         android:layout_height="wrap_content"
         app:title="@string/playlist_maker"
         app:titleTextColor="@color/yp_white"
-        app:popupTheme="@style/Base.Theme.PlaylistMaker"/>
-
+        app:popupTheme="@style/Base.Theme.PlaylistMaker.StatusBar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,6 +48,5 @@
             style="@style/ButtonActivityMain" />
 
     </LinearLayout>
-
 
 </LinearLayout>

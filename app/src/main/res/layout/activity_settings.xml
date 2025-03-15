@@ -5,9 +5,8 @@
     android:id="@+id/item_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSecondaryVariant"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
@@ -20,8 +19,8 @@
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/theme_switch"
         style="@style/CustomSwitch"
-        android:text="@string/dark_theme"
         android:paddingEnd="6dp"
+        android:text="@string/dark_theme"
         tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml,VisualLintButtonSize" />
 
 
@@ -42,6 +41,5 @@
         style="@style/TextActivitySettings"
         android:text="@string/agreement"
         app:drawableEndCompat="@drawable/forward" />
-
 
 </LinearLayout>

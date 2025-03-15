@@ -1,18 +1,16 @@
 <resources>
-
-    <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/yp_text_gray</item>
-        <item name="colorPrimaryVariant">@color/yp_blue</item>
-        <item name="colorOnPrimary">@color/yp_text_gray</item>
-
-        <item name="colorSecondary">@color/yp_white</item>
-        <item name="colorSecondaryVariant">@color/yp_white</item>
-        <item name="colorOnSecondary">@color/yp_black</item>
-
+    <style name="Base.Theme.PlaylistMaker.StatusBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
 
+    <style name="Base.Theme.PlaylistMaker.ActivityMain" parent="Base.Theme.PlaylistMaker.StatusBar">
+        <item name="android:background">@color/activityMainBackground</item>
+    </style>
+
+    <style name="Base.Theme.PlaylistMaker.ActivitySecondary" parent="Base.Theme.PlaylistMaker.StatusBar">
+        <item name="android:background">@color/activitySecondaryBackground</item>
     </style>
 
     <style name="CustomSwitch" parent="TextActivitySettings">
