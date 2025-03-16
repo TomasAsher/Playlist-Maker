@@ -14,6 +14,7 @@
         Сообщение разработчикам иразработчицам приложения Playlist Maker</string>
     <string name="messageMail">
         Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="toastMail">На вашем устройстве не настроен почтовый клиент</string>
     <string name="agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="editTextSearch">Поиск</string>
 </resources>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
@@ -35,6 +36,7 @@ class SettingsActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             val mainIntent = Intent(this, MainActivity::class.java)
             startActivity(mainIntent)
+            finish()
         }
     }
 
@@ -45,18 +47,27 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun sendSupportEmail() {
         val email = "thetimurik@yandex.ru"
         val subject = getString(R.string.messageTheme)
         val body = getString(R.string.messageMail)
+        val toast = getString(R.string.toastMail)
 
         val intent = Intent(Intent.ACTION_SEND).apply {
-            data = "mailto:".toUri()
+            type = "message/rfc822"
             putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, body)
         }
-        startActivity(intent)
+
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(
+                this, toast, Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun shareContent() {

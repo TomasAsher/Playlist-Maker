@@ -5,15 +5,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
 class SearchActivity : AppCompatActivity() {
+
+    private var searchText: String = ""
+
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString("searchText", "")
+        }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
         setSupportActionBar(toolbar)
@@ -21,9 +29,11 @@ class SearchActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             val mainIntent = Intent(this, MainActivity::class.java)
             startActivity(mainIntent)
+            finish()
         }
 
         val editText: EditText = findViewById(R.id.editText)
+        editText.setText(searchText)
         editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
             editText.compoundDrawablesRelative[0],
             null,
@@ -51,6 +61,7 @@ class SearchActivity : AppCompatActivity() {
                         null
                     )
                 }
+                searchText = s?.toString() ?: ""
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -64,11 +75,29 @@ class SearchActivity : AppCompatActivity() {
                         event.x >= (editText.width - editText.paddingEnd - drawableEnd.bounds.width())
                     if (isClearButtonClicked) {
                         editText.text.clear()
+                        searchText = ""
+
+                        val imm =
+                            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(editText.windowToken, 0)
+
                         return@setOnTouchListener true
                     }
                 }
             }
             false
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("searchText", searchText)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchText = savedInstanceState.getString("searchText", "")
+        val editText: EditText = findViewById(R.id.editText)
+        editText.setText(searchText)
     }
 }
