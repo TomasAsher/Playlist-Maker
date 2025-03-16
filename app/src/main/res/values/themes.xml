@@ -1,9 +1,25 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <style name="Base.Theme.PlaylistMaker.StatusBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+    <style name="Base.Theme.PlaylistMaker.ActivityMain" parent="Base.Theme.PlaylistMaker.StatusBar">
+        <item name="android:background">@color/activityMainBackground</item>
+    </style>
+
+    <style name="Base.Theme.PlaylistMaker.ActivitySecondary" parent="Base.Theme.PlaylistMaker.StatusBar">
+        <item name="android:background">@color/activitySecondaryBackground</item>
+    </style>
+
+    <style name="CustomSwitch" parent="TextActivitySettings">
+        <item name="thumbTint">@color/yp_text_gray</item>
+        <item name="trackTint">@color/yp_light_gray</item>
+    </style>
+
+    <style name="CustomEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@color/yp_light_gray</item>
+        <item name="android:textColorHint">@color/yp_text_gray</item>
+    </style>
 </resources>
