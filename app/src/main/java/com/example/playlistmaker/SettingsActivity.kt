@@ -34,8 +34,6 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         toolbar.setNavigationOnClickListener {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
             finish()
         }
     }

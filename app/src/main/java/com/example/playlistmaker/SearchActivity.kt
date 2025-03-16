@@ -1,7 +1,6 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,16 +18,10 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString("searchText", "")
-        }
-
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
         setSupportActionBar(toolbar)
 
         toolbar.setNavigationOnClickListener {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
             finish()
         }
 
