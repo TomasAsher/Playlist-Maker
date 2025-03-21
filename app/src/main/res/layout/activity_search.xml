@@ -23,7 +23,7 @@
         android:layout_marginStart="@dimen/_16dp"
         android:layout_marginTop="@dimen/_8dp"
         android:layout_marginEnd="@dimen/_16dp"
-        android:layout_marginBottom="@dimen/_8dp"
+        android:layout_marginBottom="@dimen/_24dp"
         android:background="@drawable/rounded_edittext"
         android:drawableStart="@drawable/search_edit_text"
         android:drawableEnd="@drawable/clear_button_icon"
@@ -37,6 +37,13 @@
         android:paddingEnd="14dp"
         android:textCursorDrawable="@drawable/cursor_blue"
         tools:ignore="Autofill,DuplicateSpeakableTextCheck,TextContrastCheck,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="SpeakableTextPresentCheck"
+        tools:listitem="@layout/item_track" />
 
 </LinearLayout>
 
