@@ -35,6 +35,7 @@
         android:minHeight="36dp"
         android:paddingStart="@dimen/_12dp"
         android:paddingEnd="14dp"
+        android:textColor="@color/yp_black"
         android:textCursorDrawable="@drawable/cursor_blue"
         tools:ignore="Autofill,DuplicateSpeakableTextCheck,TextContrastCheck,TouchTargetSizeCheck,VisualLintTextFieldSize" />
 
