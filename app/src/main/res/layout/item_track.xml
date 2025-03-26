@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         tools:ignore="ContentDescription,ImageContrastCheck"
-        tools:src="@drawable/placeholder" />
+        tools:src="@drawable/track_placeholder" />
 
     <LinearLayout
         android:layout_width="0dp"
