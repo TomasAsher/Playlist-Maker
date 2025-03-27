@@ -91,6 +91,9 @@ class SearchActivity : AppCompatActivity() {
                     if (isClearButtonClicked) {
                         editText.text.clear()
                         searchText = ""
+                        adapter.updateTracks(emptyList())
+                        showPlaceholder(false)
+                        showErrorPlaceholder(false)
                         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(editText.windowToken, 0)
                         return@setOnTouchListener true
