@@ -17,4 +17,7 @@
     <string name="toastMail">На вашем устройстве не настроен почтовый клиент</string>
     <string name="agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="editTextSearch">Поиск</string>
+    <string name="no_results">Ничего не нашлось</string>
+    <string name="server_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh">Обновить</string>
 </resources>

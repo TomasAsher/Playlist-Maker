@@ -18,11 +18,11 @@ class TrackViewHolder(parent: ViewGroup, inflater: LayoutInflater) :
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        trackTime.text = track.formatTime()
 
         Glide.with(itemView)
             .load(track.artworkUrl100)
-            .placeholder(R.drawable.placeholder)
+            .placeholder(R.drawable.track_placeholder)
             .centerCrop()
             .transform(RoundedCorners(2))
             .into(trackCover)
