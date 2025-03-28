@@ -1,10 +1,11 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -12,6 +13,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +29,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholder: LinearLayout
     private lateinit var errorPlaceholder: LinearLayout
     private lateinit var refreshButton: Button
+    private var tracksList: List<Track> = emptyList()
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +47,23 @@ class SearchActivity : AppCompatActivity() {
         refreshButton = findViewById(R.id.refresh_button)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = TrackAdapter(emptyList())
+        adapter = TrackAdapter(tracksList)
         recyclerView.adapter = adapter
 
-        editText.setText(searchText)
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString("searchText") ?: ""
+            tracksList =
+                savedInstanceState.getParcelableArrayListCompat<Track>("tracks") ?: emptyList()
+            val isPlaceholderVisible = savedInstanceState.getBoolean("placeholderVisible", false)
+            val isErrorVisible = savedInstanceState.getBoolean("errorVisible", false)
+
+            editText.setText(searchText)
+            adapter.updateTracks(tracksList)
+            placeholder.isVisible = isPlaceholderVisible
+            errorPlaceholder.isVisible = isErrorVisible
+            recyclerView.isVisible = !isPlaceholderVisible && !isErrorVisible
+        }
+
         setupEditText(editText)
 
         refreshButton.setOnClickListener {
@@ -68,8 +84,8 @@ class SearchActivity : AppCompatActivity() {
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         editText.compoundDrawablesRelative[0], null, null, null
                     )
-                    showPlaceholder(false)
-                    showErrorPlaceholder(false)
+                    placeholder.isVisible = false
+                    errorPlaceholder.isVisible = false
                 } else {
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         editText.compoundDrawablesRelative[0], null,
@@ -91,9 +107,10 @@ class SearchActivity : AppCompatActivity() {
                     if (isClearButtonClicked) {
                         editText.text.clear()
                         searchText = ""
+                        tracksList = emptyList()
                         adapter.updateTracks(emptyList())
-                        showPlaceholder(false)
-                        showErrorPlaceholder(false)
+                        placeholder.isVisible = false
+                        errorPlaceholder.isVisible = false
                         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(editText.windowToken, 0)
                         return@setOnTouchListener true
@@ -117,51 +134,49 @@ class SearchActivity : AppCompatActivity() {
     private fun searchTracks(query: String) {
         lifecycleScope.launch {
             try {
-                showLoadingState()
+                placeholder.isVisible = false
+                errorPlaceholder.isVisible = false
+                recyclerView.isVisible = true
+
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.search(query)
                 }
 
                 if (response.results.isNotEmpty()) {
-                    adapter.updateTracks(response.results)
-                    showPlaceholder(false)
-                    showErrorPlaceholder(false)
+                    tracksList = response.results
+                    adapter.updateTracks(tracksList)
+                    placeholder.isVisible = false
+                    errorPlaceholder.isVisible = false
                 } else {
-                    showPlaceholder(true)
-                    showErrorPlaceholder(false)
+                    tracksList = emptyList()
+                    adapter.updateTracks(emptyList())
+                    placeholder.isVisible = true
+                    errorPlaceholder.isVisible = false
                 }
             } catch (_: Exception) {
-                showErrorPlaceholder(true)
-                showPlaceholder(false)
+                tracksList = emptyList()
+                adapter.updateTracks(emptyList())
+                errorPlaceholder.isVisible = true
+                placeholder.isVisible = false
             }
         }
-    }
-
-    private fun showLoadingState() {
-        placeholder.visibility = View.GONE
-        errorPlaceholder.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
-    }
-
-    private fun showPlaceholder(show: Boolean) {
-        placeholder.visibility = if (show) View.VISIBLE else View.GONE
-        recyclerView.visibility = if (show) View.GONE else View.VISIBLE
-    }
-
-    private fun showErrorPlaceholder(show: Boolean) {
-        errorPlaceholder.visibility = if (show) View.VISIBLE else View.GONE
-        recyclerView.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("searchText", searchText)
+        outState.putParcelableArrayList("tracks", ArrayList(tracksList))
+        outState.putBoolean("placeholderVisible", placeholder.isVisible)
+        outState.putBoolean("errorVisible", errorPlaceholder.isVisible)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchText = savedInstanceState.getString("searchText", "")
-        val editText: EditText = findViewById(R.id.editText)
-        editText.setText(searchText)
+    @SuppressLint("NewApi")
+    inline fun <reified T : Parcelable> Bundle.getParcelableArrayListCompat(key: String): List<T>? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getParcelableArrayList(key, T::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            getParcelableArrayList(key)
+        }
     }
 }
