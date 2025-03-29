@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
@@ -22,19 +23,26 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchActivity : AppCompatActivity() {
-
     private var searchText: String = ""
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TrackAdapter
     private lateinit var placeholder: LinearLayout
     private lateinit var errorPlaceholder: LinearLayout
     private lateinit var refreshButton: Button
+    private lateinit var historyContainer: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var clearHistoryButton: Button
+    private lateinit var historyTitle: TextView
+    private lateinit var historyAdapter: TrackAdapter
     private var tracksList: List<Track> = emptyList()
+    private lateinit var searchHistory: SearchHistory
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        searchHistory = SearchHistory(getSharedPreferences("app_prefs", MODE_PRIVATE))
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
         setSupportActionBar(toolbar)
@@ -45,10 +53,29 @@ class SearchActivity : AppCompatActivity() {
         placeholder = findViewById(R.id.no_results_placeholder)
         errorPlaceholder = findViewById(R.id.error_placeholder)
         refreshButton = findViewById(R.id.refresh_button)
+        historyContainer = findViewById(R.id.history_container)
+        historyRecyclerView = findViewById(R.id.history_recycler_view)
+        clearHistoryButton = findViewById(R.id.clear_history_button)
+        historyTitle = findViewById(R.id.history_title)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = TrackAdapter(tracksList)
+        adapter = TrackAdapter(tracksList) { track -> onTrackClicked(track) }
         recyclerView.adapter = adapter
+
+        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyAdapter = TrackAdapter(emptyList()) { track -> onTrackClicked(track) }
+        historyRecyclerView.adapter = historyAdapter
+
+        clearHistoryButton.setOnClickListener {
+            searchHistory.clearHistory()
+            updateHistoryVisibility()
+        }
+
+        editText.setOnFocusChangeListener { _, hasFocus ->
+            updateHistoryVisibility()
+        }
+
+        updateHistoryVisibility()
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString("searchText") ?: ""
@@ -65,11 +92,30 @@ class SearchActivity : AppCompatActivity() {
         }
 
         setupEditText(editText)
-
         refreshButton.setOnClickListener {
             if (searchText.isNotEmpty()) {
                 searchTracks(searchText)
             }
+        }
+    }
+
+    private fun onTrackClicked(track: Track) {
+        searchHistory.addTrack(track)
+        updateHistoryVisibility()
+    }
+
+    private fun updateHistoryVisibility() {
+        val history = searchHistory.getHistory()
+        val editText: EditText = findViewById(R.id.editText)
+        val shouldShowHistory =
+            editText.text.isEmpty() && editText.hasFocus() && history.isNotEmpty()
+
+        historyContainer.isVisible = shouldShowHistory
+        recyclerView.isVisible =
+            !shouldShowHistory && !placeholder.isVisible && !errorPlaceholder.isVisible
+
+        if (shouldShowHistory) {
+            historyAdapter.updateTracks(history)
         }
     }
 
@@ -93,6 +139,7 @@ class SearchActivity : AppCompatActivity() {
                     )
                 }
                 searchText = s?.toString() ?: ""
+                updateHistoryVisibility()
             }
 
             override fun afterTextChanged(s: Editable?) {}

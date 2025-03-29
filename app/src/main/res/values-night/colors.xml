@@ -12,7 +12,7 @@
     <color name="searchItemText">@color/yp_white</color>
     <color name="searchTrackName">@color/yp_white</color>
 
-    <color name="refreshButtonBackground">@color/yp_white</color>
-    <color name="textRefreshButton">@color/yp_black</color>
-    <color name="textPlaceholder">@color/yp_white</color>
+    <color name="buttonsSearchActivityBackground">@color/yp_white</color>
+    <color name="textsSearchActivityButton">@color/yp_black</color>
+    <color name="textsSearchActivity">@color/yp_white</color>
 </resources>
