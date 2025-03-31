@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
 
@@ -14,6 +16,16 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        val themeSwitch = findViewById<SwitchCompat>(R.id.theme_switch)
+        themeSwitch.isChecked = ThemePreferences.isDarkThemeEnabled(this)
+        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            ThemePreferences.setDarkThemeEnabled(this, isChecked)
+            AppCompatDelegate.setDefaultNightMode(
+                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
 
         val buttonShare: TextView = findViewById(R.id.buttonShare)
         buttonShare.setOnClickListener {
@@ -32,7 +44,6 @@ class SettingsActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_settings)
         setSupportActionBar(toolbar)
-
         toolbar.setNavigationOnClickListener {
             finish()
         }
@@ -40,7 +51,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun openAgreementPage() {
         val url = getString(R.string.agreement_url)
-
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         startActivity(intent)
     }
