@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -102,6 +103,10 @@ class SearchActivity : AppCompatActivity() {
     private fun onTrackClicked(track: Track) {
         searchHistory.addTrack(track)
         updateHistoryVisibility()
+        val intent = Intent(this, PlayerActivity::class.java).apply {
+            putExtra("track", track)
+        }
+        startActivity(intent)
     }
 
     private fun updateHistoryVisibility() {

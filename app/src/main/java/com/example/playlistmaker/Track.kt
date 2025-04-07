@@ -2,7 +2,6 @@ package com.example.playlistmaker
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Parcelize
@@ -11,9 +10,17 @@ data class Track(
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
-    val artworkUrl100: String
+    val artworkUrl100: String,
+    val collectionName: String?,
+    val releaseDate: String?,
+    val primaryGenreName: String?,
+    val country: String?
 ) : Parcelable {
     fun formatTime(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
+        val minutes = (trackTimeMillis / 1000) / 60
+        val seconds = (trackTimeMillis / 1000) % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
+
+    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 }

@@ -2,13 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MediaActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".PlayerActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_settings"
+        android:id="@+id/toolbar_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:navigationIcon="@drawable/back"
@@ -33,14 +34,16 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/_16dp"
+        android:contentDescription="@string/album_cover_desc"
         android:scaleType="centerCrop"
+        android:src="@drawable/track_placeholder"
         app:layout_constraintBottom_toTopOf="@+id/trackName"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_settings"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_player"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:src="@drawable/track_placeholder" />
+        tools:ignore="ImageContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/trackName"
@@ -55,6 +58,7 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@id/albumCover"
+        tools:ignore="VisualLintBounds"
         tools:text="Для нее" />
 
     <TextView
@@ -69,38 +73,45 @@
         android:textSize="@dimen/_14sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@id/trackName"
+        tools:ignore="VisualLintBounds"
         tools:text="Гуф" />
 
     <ImageView
         android:id="@+id/addToPlaylistButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/add_to_playlist_desc"
+        android:src="@drawable/ic_add_to_playlist"
         app:layout_constraintBottom_toBottomOf="@+id/playPauseButton"
         app:layout_constraintEnd_toStartOf="@+id/playPauseButton"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toTopOf="@+id/playPauseButton"
-        tools:src="@drawable/ic_add_to_playlist" />
+        tools:ignore="ImageContrastCheck,VisualLintBounds" />
 
     <ImageView
         android:id="@+id/playPauseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16dp"
+        android:contentDescription="@string/play_button_desc"
+        android:src="@drawable/ic_play"
         app:layout_constraintBottom_toTopOf="@+id/progressTime"
         app:layout_constraintEnd_toStartOf="@+id/favoriteButton"
         app:layout_constraintStart_toEndOf="@+id/addToPlaylistButton"
         app:layout_constraintTop_toBottomOf="@+id/artistName"
-        tools:src="@drawable/ic_play" />
+        tools:ignore="VisualLintBounds" />
 
     <ImageView
         android:id="@+id/favoriteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/favorite_button_desc"
+        android:src="@drawable/ic_favorite"
         app:layout_constraintBottom_toBottomOf="@+id/playPauseButton"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toEndOf="@+id/playPauseButton"
         app:layout_constraintTop_toTopOf="@+id/playPauseButton"
-        tools:src="@drawable/ic_favorite" />
+        tools:ignore="ImageContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/progressTime"
@@ -112,6 +123,7 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@id/playPauseButton"
+        tools:ignore="VisualLintBounds"
         tools:text="2:43" />
 
     <TextView
@@ -124,7 +136,8 @@
         android:textColor="@color/yp_text_gray"
         android:textSize="@dimen/_13sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/progressTime" />
+        app:layout_constraintTop_toBottomOf="@id/progressTime"
+        tools:ignore="TextContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/durationTime"
@@ -136,6 +149,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/duration"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/duration"
+        tools:ignore="VisualLintBounds"
         tools:text="3:21" />
 
     <TextView
@@ -148,7 +162,8 @@
         android:textColor="@color/yp_text_gray"
         android:textSize="@dimen/_13sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/duration" />
+        app:layout_constraintTop_toBottomOf="@id/duration"
+        tools:ignore="TextContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/albumName"
@@ -160,6 +175,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/album"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/album"
+        tools:ignore="VisualLintBounds"
         tools:text="О'пять" />
 
     <TextView
@@ -172,7 +188,8 @@
         android:textColor="@color/yp_text_gray"
         android:textSize="@dimen/_13sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/album" />
+        app:layout_constraintTop_toBottomOf="@id/album"
+        tools:ignore="TextContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/releaseYear"
@@ -184,6 +201,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/year"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/year"
+        tools:ignore="VisualLintBounds"
         tools:text="2009" />
 
     <TextView
@@ -196,7 +214,8 @@
         android:textColor="@color/yp_text_gray"
         android:textSize="@dimen/_13sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/year" />
+        app:layout_constraintTop_toBottomOf="@id/year"
+        tools:ignore="TextContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/genreLabel"
@@ -208,6 +227,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/genre"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/genre"
+        tools:ignore="VisualLintBounds"
         tools:text="Рэп" />
 
     <TextView
@@ -220,7 +240,8 @@
         android:textColor="@color/yp_text_gray"
         android:textSize="@dimen/_13sp"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/genre" />
+        app:layout_constraintTop_toBottomOf="@id/genre"
+        tools:ignore="TextContrastCheck,VisualLintBounds" />
 
     <TextView
         android:id="@+id/countryLabel"
@@ -232,6 +253,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/country"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/country"
+        tools:ignore="VisualLintBounds"
         tools:text="Россия" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
