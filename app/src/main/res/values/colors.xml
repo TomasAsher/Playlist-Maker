@@ -22,4 +22,6 @@
     <color name="buttonsSearchActivityBackground">@color/yp_black</color>
     <color name="textsSearchActivityButton">@color/yp_white</color>
     <color name="textsSearchActivity">@color/yp_black</color>
+
+    <color name="textsPlayer">@color/yp_black</color>
 </resources>
