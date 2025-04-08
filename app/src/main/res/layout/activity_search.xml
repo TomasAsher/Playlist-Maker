@@ -31,7 +31,6 @@
             android:layout_marginBottom="@dimen/_8dp"
             android:background="@drawable/rounded_edittext"
             android:drawableStart="@drawable/search_edit_text"
-            android:drawableEnd="@drawable/clear_button_icon"
             android:drawablePadding="@dimen/_8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search"
