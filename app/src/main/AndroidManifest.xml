@@ -18,6 +18,12 @@
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />
         <activity
+            android:name=".PlayerActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />
+        <activity
             android:name=".MediaActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />

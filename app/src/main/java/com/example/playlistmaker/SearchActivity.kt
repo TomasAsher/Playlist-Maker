@@ -1,11 +1,14 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -14,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -102,6 +106,10 @@ class SearchActivity : AppCompatActivity() {
     private fun onTrackClicked(track: Track) {
         searchHistory.addTrack(track)
         updateHistoryVisibility()
+        val intent = Intent(this, PlayerActivity::class.java).apply {
+            putExtra(PlayerActivity.TRACK_KEY, track)
+        }
+        startActivity(intent)
     }
 
     private fun updateHistoryVisibility() {
@@ -126,18 +134,7 @@ class SearchActivity : AppCompatActivity() {
 
             @SuppressLint("UseCompatLoadingForDrawables")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-                    editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        editText.compoundDrawablesRelative[0], null, null, null
-                    )
-                    placeholder.isVisible = false
-                    errorPlaceholder.isVisible = false
-                } else {
-                    editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        editText.compoundDrawablesRelative[0], null,
-                        resources.getDrawable(R.drawable.clear_button_icon, theme), null
-                    )
-                }
+                updateClearButtonVisibility(editText, s)
                 searchText = s?.toString() ?: ""
                 updateHistoryVisibility()
             }
@@ -146,36 +143,53 @@ class SearchActivity : AppCompatActivity() {
         })
 
         editText.setOnTouchListener { v, event ->
-            if (event.action == android.view.MotionEvent.ACTION_UP) {
+            if (event.action == MotionEvent.ACTION_UP) {
                 val drawableEnd = editText.compoundDrawablesRelative[2]
-                if (drawableEnd != null) {
-                    val isClearButtonClicked =
-                        event.x >= (editText.width - editText.paddingEnd - drawableEnd.bounds.width())
-                    if (isClearButtonClicked) {
-                        editText.text.clear()
-                        searchText = ""
-                        tracksList = emptyList()
-                        adapter.updateTracks(emptyList())
-                        placeholder.isVisible = false
-                        errorPlaceholder.isVisible = false
-                        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.hideSoftInputFromWindow(editText.windowToken, 0)
-                        return@setOnTouchListener true
-                    }
+                if (drawableEnd != null && isClearButtonClicked(editText, event, drawableEnd)) {
+                    editText.text.clear()
+                    searchText = ""
+                    tracksList = emptyList()
+                    adapter.updateTracks(emptyList())
+                    placeholder.isVisible = false
+                    errorPlaceholder.isVisible = false
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(editText.windowToken, 0)
+                    return@setOnTouchListener true
                 }
             }
             false
         }
 
         editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (searchText.isNotEmpty()) {
-                    searchTracks(searchText)
-                }
+            if (actionId == EditorInfo.IME_ACTION_DONE && searchText.isNotEmpty()) {
+                searchTracks(searchText)
                 true
+            } else {
+                false
             }
-            false
         }
+    }
+
+    private fun updateClearButtonVisibility(editText: EditText, text: CharSequence?) {
+        val drawable = if (!text.isNullOrEmpty()) {
+            ContextCompat.getDrawable(this, R.drawable.clear_button_icon)
+        } else {
+            null
+        }
+        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            editText.compoundDrawablesRelative[0],
+            null,
+            drawable,
+            null
+        )
+    }
+
+    private fun isClearButtonClicked(
+        editText: EditText,
+        event: MotionEvent,
+        drawableEnd: Drawable
+    ): Boolean {
+        return event.x >= (editText.width - editText.paddingEnd - drawableEnd.bounds.width())
     }
 
     private fun searchTracks(query: String) {
