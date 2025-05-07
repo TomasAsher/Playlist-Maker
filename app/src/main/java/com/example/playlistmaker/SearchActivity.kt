@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -38,8 +41,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistoryButton: Button
     private lateinit var historyTitle: TextView
     private lateinit var historyAdapter: TrackAdapter
+    private lateinit var progressBar: ProgressBar
     private var tracksList: List<Track> = emptyList()
     private lateinit var searchHistory: SearchHistory
+    private val handler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
+    private companion object {
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+    }
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +70,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView = findViewById(R.id.history_recycler_view)
         clearHistoryButton = findViewById(R.id.clear_history_button)
         historyTitle = findViewById(R.id.history_title)
+        progressBar = findViewById(R.id.progressBar)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = TrackAdapter(tracksList) { track -> onTrackClicked(track) }
@@ -129,6 +139,8 @@ class SearchActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupEditText(editText: EditText) {
+        editText.imeOptions = EditorInfo.IME_ACTION_NONE
+
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -137,6 +149,18 @@ class SearchActivity : AppCompatActivity() {
                 updateClearButtonVisibility(editText, s)
                 searchText = s?.toString() ?: ""
                 updateHistoryVisibility()
+
+                searchRunnable?.let { handler.removeCallbacks(it) }
+                if (searchText.isNotEmpty()) {
+                    searchRunnable = Runnable { searchTracks(searchText) }
+                    handler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
+                } else {
+                    tracksList = emptyList()
+                    adapter.updateTracks(emptyList())
+                    placeholder.isVisible = false
+                    errorPlaceholder.isVisible = false
+                    progressBar.isVisible = false
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -152,21 +176,14 @@ class SearchActivity : AppCompatActivity() {
                     adapter.updateTracks(emptyList())
                     placeholder.isVisible = false
                     errorPlaceholder.isVisible = false
+                    progressBar.isVisible = false
+                    handler.removeCallbacks(searchRunnable ?: return@setOnTouchListener true)
                     val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(editText.windowToken, 0)
                     return@setOnTouchListener true
                 }
             }
             false
-        }
-
-        editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE && searchText.isNotEmpty()) {
-                searchTracks(searchText)
-                true
-            } else {
-                false
-            }
         }
     }
 
@@ -195,30 +212,36 @@ class SearchActivity : AppCompatActivity() {
     private fun searchTracks(query: String) {
         lifecycleScope.launch {
             try {
+                progressBar.isVisible = true
                 placeholder.isVisible = false
                 errorPlaceholder.isVisible = false
-                recyclerView.isVisible = true
+                recyclerView.isVisible = false
 
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.search(query)
                 }
 
+                progressBar.isVisible = false
                 if (response.results.isNotEmpty()) {
                     tracksList = response.results
                     adapter.updateTracks(tracksList)
                     placeholder.isVisible = false
                     errorPlaceholder.isVisible = false
+                    recyclerView.isVisible = true
                 } else {
                     tracksList = emptyList()
                     adapter.updateTracks(emptyList())
                     placeholder.isVisible = true
                     errorPlaceholder.isVisible = false
+                    recyclerView.isVisible = false
                 }
             } catch (_: Exception) {
+                progressBar.isVisible = false
                 tracksList = emptyList()
                 adapter.updateTracks(emptyList())
                 errorPlaceholder.isVisible = true
                 placeholder.isVisible = false
+                recyclerView.isVisible = false
             }
         }
     }
@@ -229,6 +252,11 @@ class SearchActivity : AppCompatActivity() {
         outState.putParcelableArrayList("tracks", ArrayList(tracksList))
         outState.putBoolean("placeholderVisible", placeholder.isVisible)
         outState.putBoolean("errorVisible", errorPlaceholder.isVisible)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        searchRunnable?.let { handler.removeCallbacks(it) }
     }
 
     @SuppressLint("NewApi")
