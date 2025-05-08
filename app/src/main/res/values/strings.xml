@@ -31,4 +31,5 @@
     <string name="play_button_desc">Кнопка воспроизведения</string>
     <string name="add_to_playlist_desc">Добавить в плейлист</string>
     <string name="album_cover_desc">Обложка альбома</string>
+    <string name="_0_00">0:00</string>
 </resources>

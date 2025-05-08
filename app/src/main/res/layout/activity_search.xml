@@ -34,7 +34,7 @@
             android:drawablePadding="@dimen/_8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNone"
             android:inputType="text"
             android:maxLines="1"
             android:minHeight="36dp"
@@ -157,6 +157,14 @@
                     android:textColor="@color/textsSearchActivityButton"
                     app:cornerRadius="54dp" />
             </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateDrawable="@drawable/surface"
+                android:visibility="gone" />
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>
