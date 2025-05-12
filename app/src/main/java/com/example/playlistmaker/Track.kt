@@ -14,7 +14,8 @@ data class Track(
     val collectionName: String?,
     val releaseDate: String?,
     val primaryGenreName: String?,
-    val country: String?
+    val country: String?,
+    val previewUrl: String?
 ) : Parcelable {
     fun formatTime(): String {
         val minutes = (trackTimeMillis / 1000) / 60

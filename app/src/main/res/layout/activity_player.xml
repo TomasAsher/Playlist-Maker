@@ -152,7 +152,7 @@
         app:layout_constraintStart_toStartOf="@id/guideline_start"
         app:layout_constraintTop_toBottomOf="@id/playPauseButton"
         tools:ignore="VisualLintBounds"
-        tools:text="2:43" />
+        tools:text="0:00" />
 
     <TextView
         android:id="@+id/duration"
@@ -177,7 +177,7 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@+id/duration"
         tools:ignore="VisualLintBounds"
-        tools:text="3:21" />
+        tools:text="0:30" />
 
     <TextView
         android:id="@+id/album"
