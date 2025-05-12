@@ -38,7 +38,7 @@
             tools:text="Track Name" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -47,6 +47,7 @@
                 android:id="@+id/artistName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="250dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/searchItemText"
@@ -66,6 +67,7 @@
                 android:id="@+id/trackTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:textColor="@color/searchItemText"
                 android:textSize="@dimen/_11sp"
                 tools:ignore="TextContrastCheck"

@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +24,6 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
         private const val UPDATE_INTERVAL = 300L
-        private const val TAG = "PlayerActivity"
     }
 
     private lateinit var albumCover: ImageView
@@ -39,7 +37,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var countryLabel: TextView
     private lateinit var playPauseButton: ImageView
 
-    private var mediaPlayer = MediaPlayer()
+    private val mediaPlayer: MediaPlayer by lazy { MediaPlayer() }
     private var playerState = STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
     private var updateTimeTask: Runnable? = null
@@ -109,7 +107,6 @@ class PlayerActivity : AppCompatActivity() {
         track.previewUrl?.let {
             preparePlayer(it)
         } ?: run {
-            Log.e(TAG, "Preview URL is null, disabling play button")
             playPauseButton.isEnabled = false
         }
     }
@@ -122,24 +119,20 @@ class PlayerActivity : AppCompatActivity() {
             mediaPlayer.setOnPreparedListener {
                 playPauseButton.isEnabled = true
                 playerState = STATE_PREPARED
-                Log.d(TAG, "MediaPlayer prepared successfully for URL: $url")
             }
             mediaPlayer.setOnCompletionListener {
                 playPauseButton.setImageResource(R.drawable.ic_play)
                 playerState = STATE_PREPARED
                 progressTime.text = getString(R.string._0_00)
                 handler.removeCallbacks(updateTimeTask ?: return@setOnCompletionListener)
-                Log.d(TAG, "Playback completed")
             }
             mediaPlayer.setOnErrorListener { _, what, extra ->
-                Log.e(TAG, "MediaPlayer error: what=$what, extra=$extra")
                 playPauseButton.isEnabled = false
                 playerState = STATE_DEFAULT
                 progressTime.text = getString(R.string._0_00)
                 true
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error preparing MediaPlayer: ${e.message}")
+        } catch (_: Exception) {
             playPauseButton.isEnabled = false
             playerState = STATE_DEFAULT
         }
@@ -151,9 +144,7 @@ class PlayerActivity : AppCompatActivity() {
             playPauseButton.setImageResource(R.drawable.ic_pause)
             playerState = STATE_PLAYING
             startTimer()
-            Log.d(TAG, "Playback started")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error starting playback: ${e.message}")
+        } catch (_: Exception) {
             playPauseButton.setImageResource(R.drawable.ic_play)
             playerState = STATE_DEFAULT
             playPauseButton.isEnabled = false
@@ -166,9 +157,7 @@ class PlayerActivity : AppCompatActivity() {
             playPauseButton.setImageResource(R.drawable.ic_play)
             playerState = STATE_PAUSED
             handler.removeCallbacks(updateTimeTask ?: return)
-            Log.d(TAG, "Playback paused")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error pausing playback: ${e.message}")
+        } catch (_: Exception) {
             playPauseButton.setImageResource(R.drawable.ic_play)
             playerState = STATE_DEFAULT
             playPauseButton.isEnabled = false
@@ -183,9 +172,7 @@ class PlayerActivity : AppCompatActivity() {
             playerState = STATE_DEFAULT
             progressTime.text = getString(R.string._0_00)
             handler.removeCallbacks(updateTimeTask ?: return)
-            Log.d(TAG, "Playback stopped")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error stopping playback: ${e.message}")
+        } catch (_: Exception) {
         }
     }
 
@@ -197,9 +184,7 @@ class PlayerActivity : AppCompatActivity() {
                 track?.previewUrl?.let {
                     preparePlayer(it)
                     playPauseButton.isEnabled = false
-                    Log.d(TAG, "Preparing player from STATE_DEFAULT")
                 } ?: run {
-                    Log.e(TAG, "No preview URL available")
                     playPauseButton.isEnabled = false
                 }
             }
@@ -231,7 +216,6 @@ class PlayerActivity : AppCompatActivity() {
         super.onDestroy()
         handler.removeCallbacks(updateTimeTask ?: return)
         mediaPlayer.release()
-        Log.d(TAG, "MediaPlayer released")
     }
 
     @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
