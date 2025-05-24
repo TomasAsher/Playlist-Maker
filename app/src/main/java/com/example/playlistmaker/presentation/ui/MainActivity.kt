@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -6,8 +6,14 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.impl.ThemePreferences
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var buttonSearch: Button
+    private lateinit var buttonMedia: Button
+    private lateinit var buttonSettings: Button
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         if (ThemePreferences.isDarkThemeEnabled(this)) {
@@ -16,18 +22,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val buttonSearch = findViewById<Button>(R.id.button_search)
-        val buttonMedia = findViewById<Button>(R.id.button_media)
-        val buttonSettings = findViewById<Button>(R.id.button_settings)
+        buttonSearch = findViewById(R.id.button_search)
+        buttonMedia = findViewById(R.id.button_media)
+        buttonSettings = findViewById(R.id.button_settings)
+
+        if (!::buttonSearch.isInitialized || !::buttonMedia.isInitialized || !::buttonSettings.isInitialized) {
+            println("Buttons not initialized properly")
+            return
+        }
 
         buttonSearch.setOnClickListener {
-            val settingsIntent = Intent(this, SearchActivity::class.java)
-            startActivity(settingsIntent)
+            val searchIntent = Intent(this, SearchActivity::class.java)
+            startActivity(searchIntent)
         }
 
         buttonMedia.setOnClickListener {
-            val settingsIntent = Intent(this, MediaActivity::class.java)
-            startActivity(settingsIntent)
+            val mediaIntent = Intent(this, MediaActivity::class.java)
+            startActivity(mediaIntent)
         }
 
         buttonSettings.setOnClickListener {
