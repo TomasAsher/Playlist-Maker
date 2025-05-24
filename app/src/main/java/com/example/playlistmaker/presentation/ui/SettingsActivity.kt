@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.impl.ThemePreferences
 
 class SettingsActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -72,9 +74,7 @@ class SettingsActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         } else {
-            Toast.makeText(
-                this, toast, Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
         }
     }
 

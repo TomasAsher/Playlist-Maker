@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.impl
 
 import android.content.Context
 import androidx.core.content.edit
@@ -14,7 +14,7 @@ object ThemePreferences {
 
     fun setDarkThemeEnabled(context: Context, enabled: Boolean) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit() {
+            .edit {
                 putBoolean(KEY_DARK_THEME, enabled)
             }
     }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -20,7 +20,7 @@ data class Track(
     fun formatTime(): String {
         val minutes = (trackTimeMillis / 1000) / 60
         val seconds = (trackTimeMillis / 1000) % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+        return String.Companion.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
