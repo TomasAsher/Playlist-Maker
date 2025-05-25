@@ -51,54 +51,20 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        albumCover = findViewById(R.id.albumCover) ?: run {
-            println("albumCover is null")
-            return
-        }
-        trackName = findViewById(R.id.trackName) ?: run {
-            println("trackName is null")
-            return
-        }
-        artistName = findViewById(R.id.artistName) ?: run {
-            println("artistName is null")
-            return
-        }
-        progressTime = findViewById(R.id.progressTime) ?: run {
-            println("progressTime is null")
-            return
-        }
-        durationTime = findViewById(R.id.durationTime) ?: run {
-            println("durationTime is null")
-            return
-        }
-        albumName = findViewById(R.id.albumName) ?: run {
-            println("albumName is null")
-            return
-        }
-        releaseYear = findViewById(R.id.releaseYear) ?: run {
-            println("releaseYear is null")
-            return
-        }
-        genreLabel = findViewById(R.id.genreLabel) ?: run {
-            println("genreLabel is null")
-            return
-        }
-        countryLabel = findViewById(R.id.countryLabel) ?: run {
-            println("countryLabel is null")
-            return
-        }
-        playPauseButton = findViewById(R.id.playPauseButton) ?: run {
-            println("playPauseButton is null")
-            return
-        }
-        println("PlayerActivity: Views initialized successfully")
+        albumCover = findViewById(R.id.albumCover)
+        trackName = findViewById(R.id.trackName)
+        artistName = findViewById(R.id.artistName)
+        progressTime = findViewById(R.id.progressTime)
+        durationTime = findViewById(R.id.durationTime)
+        albumName = findViewById(R.id.albumName)
+        releaseYear = findViewById(R.id.releaseYear)
+        genreLabel = findViewById(R.id.genreLabel)
+        countryLabel = findViewById(R.id.countryLabel)
+        playPauseButton = findViewById(R.id.playPauseButton)
     }
 
     private fun setupToolbar() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar_player) ?: run {
-            println("toolbar_player is null")
-            return
-        }
+        val toolbar: Toolbar = findViewById(R.id.toolbar_player)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         toolbar.setNavigationOnClickListener { finish() }
@@ -128,34 +94,26 @@ class PlayerActivity : AppCompatActivity() {
         track.country?.let { countryLabel.text = it }
 
         track.previewUrl?.let {
-            println("Setting up player with previewUrl: $it")
             interactor.preparePlayer(track)
             playPauseButton.isEnabled = true
             playPauseButton.setImageResource(R.drawable.ic_play)
         } ?: run {
-            println("No previewUrl, disabling playPauseButton")
             playPauseButton.isEnabled = false
         }
     }
 
     private fun playbackControl() {
-        println("playbackControl called, isPlaying = ${interactor.isPlaying()}")
         when {
             interactor.isPlaying() -> {
-                println("Pausing player")
                 interactor.pause()
                 playPauseButton.setImageResource(R.drawable.ic_play)
+                handler.removeCallbacks(updateTimeTask ?: return)
             }
 
             track?.previewUrl != null -> {
-                println("Starting player")
                 interactor.play()
                 playPauseButton.setImageResource(R.drawable.ic_pause)
                 startTimer()
-            }
-
-            else -> {
-                println("Cannot play, no previewUrl or player not prepared")
             }
         }
     }
@@ -167,7 +125,9 @@ class PlayerActivity : AppCompatActivity() {
                     progressTime.text = interactor.getCurrentPosition()
                     handler.postDelayed(this, 300L)
                 } else {
+                    progressTime.text = getString(R.string._0_00)
                     playPauseButton.setImageResource(R.drawable.ic_play)
+                    handler.removeCallbacks(this)
                 }
             }
         }
@@ -179,6 +139,7 @@ class PlayerActivity : AppCompatActivity() {
         if (interactor.isPlaying()) {
             interactor.pause()
             playPauseButton.setImageResource(R.drawable.ic_play)
+            handler.removeCallbacks(updateTimeTask ?: return)
         }
     }
 

@@ -1,21 +1,21 @@
 package com.example.playlistmaker.data.impl
 
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.example.playlistmaker.domain.api.ThemeRepository
 
-object ThemePreferences {
-    private const val PREFS_NAME = "theme_prefs"
-    private const val KEY_DARK_THEME = "dark_theme"
-
-    fun isDarkThemeEnabled(context: Context): Boolean {
-        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getBoolean(KEY_DARK_THEME, false)
+class ThemePreferences(private val sharedPreferences: SharedPreferences) : ThemeRepository {
+    companion object {
+        private const val KEY_DARK_THEME = "dark_theme"
     }
 
-    fun setDarkThemeEnabled(context: Context, enabled: Boolean) {
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit {
-                putBoolean(KEY_DARK_THEME, enabled)
-            }
+    override fun isDarkThemeEnabled(): Boolean {
+        return sharedPreferences.getBoolean(KEY_DARK_THEME, false)
+    }
+
+    override fun setDarkThemeEnabled(enabled: Boolean) {
+        sharedPreferences.edit {
+            putBoolean(KEY_DARK_THEME, enabled)
+        }
     }
 }

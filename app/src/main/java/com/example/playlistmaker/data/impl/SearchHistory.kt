@@ -6,8 +6,10 @@ import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 
-class SearchHistory(private val sharedPreferences: SharedPreferences) {
-    private val gson = Gson()
+class SearchHistory(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+) {
     private val key = "search_history"
     private val maxHistorySize = 10
 
@@ -22,9 +24,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
             sharedPreferences.edit {
                 putString(key, gson.toJson(history))
             }
-            println("Track added to history: $track")
-        } catch (e: Exception) {
-            println("Error saving history: ${e.message}")
+        } catch (_: Exception) {
         }
     }
 
@@ -33,8 +33,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         return if (json != null) {
             try {
                 gson.fromJson(json, Array<Track>::class.java)?.toList() ?: emptyList()
-            } catch (e: JsonSyntaxException) {
-                println("Error parsing history: ${e.message}")
+            } catch (_: JsonSyntaxException) {
                 emptyList()
             }
         } else {
@@ -47,9 +46,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
             sharedPreferences.edit {
                 remove(key)
             }
-            println("History cleared")
-        } catch (e: Exception) {
-            println("Error clearing history: ${e.message}")
+        } catch (_: Exception) {
         }
     }
 }
