@@ -1,22 +1,22 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.creator
 
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaPlayer
-import com.example.playlistmaker.data.impl.PlayerRepositoryImpl
-import com.example.playlistmaker.data.impl.SearchHistory
-import com.example.playlistmaker.data.impl.ThemePreferences
-import com.example.playlistmaker.data.impl.TrackRepositoryImpl
-import com.example.playlistmaker.domain.api.PlayerInteractor
-import com.example.playlistmaker.domain.api.PlayerRepository
-import com.example.playlistmaker.domain.api.ThemeInteractor
-import com.example.playlistmaker.domain.api.ThemeRepository
-import com.example.playlistmaker.domain.api.TrackInteractor
-import com.example.playlistmaker.domain.api.TrackRepository
-import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
-import com.example.playlistmaker.domain.impl.ThemeInteractorImpl
-import com.example.playlistmaker.domain.impl.TrackInteractorImpl
+import com.example.playlistmaker.player.data.PlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.PlayerInteractor
+import com.example.playlistmaker.player.domain.PlayerInteractorImpl
+import com.example.playlistmaker.player.domain.PlayerRepository
+import com.example.playlistmaker.search.data.SearchHistory
+import com.example.playlistmaker.search.data.TrackRepositoryImpl
+import com.example.playlistmaker.search.domain.TrackInteractor
+import com.example.playlistmaker.search.domain.TrackInteractorImpl
+import com.example.playlistmaker.search.domain.TrackRepository
+import com.example.playlistmaker.settings.data.ThemePreferences
+import com.example.playlistmaker.settings.domain.ThemeInteractor
+import com.example.playlistmaker.settings.domain.ThemeInteractorImpl
+import com.example.playlistmaker.settings.domain.ThemeRepository
 import com.google.gson.Gson
 
 object Creator {
@@ -65,8 +65,4 @@ object Creator {
     }
 }
 
-class MyApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-    }
-}
+class MyApp : Application()
