@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     private val _currentTime = MutableLiveData<String>()
@@ -20,8 +22,12 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
 
     fun prepare(track: Track) {
         interactor.preparePlayer(track)
-        _currentTime.value = "0:00"
+        _currentTime.value = formatTime(0)
         _isPlaying.value = false
+    }
+
+    private fun formatTime(millis: Int): String {
+        return SimpleDateFormat("m:ss", Locale.getDefault()).format(millis)
     }
 
     fun playbackControl() {
@@ -42,7 +48,7 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
             if (interactor.isPlaying()) {
                 handler.postDelayed(updateTask!!, 300)
             } else {
-                _currentTime.value = "0:00"
+                _currentTime.value = formatTime(0)
                 _isPlaying.value = false
                 handler.removeCallbacks(updateTask!!)
             }
@@ -51,7 +57,8 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     private fun stopTimer() {
-        handler.removeCallbacks(updateTask ?: return)
+        val task = updateTask ?: return
+        handler.removeCallbacks(task)
     }
 
     override fun onCleared() {

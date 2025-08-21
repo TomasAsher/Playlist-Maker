@@ -181,11 +181,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateClearButtonVisibility(editText: EditText, text: CharSequence?) {
+        val leftDrawable = editText.compoundDrawablesRelative[0]
         val drawable = if (!text.isNullOrEmpty()) ContextCompat.getDrawable(
             this,
             R.drawable.clear_button_icon
         ) else null
-        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
+        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(leftDrawable, null, drawable, null)
     }
 
     private fun searchTracks(query: String) {
