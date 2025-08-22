@@ -1,0 +1,199 @@
+Index: app/src/main/java/com/example/playlistmaker/search/data/TrackRepositoryImpl.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.playlistmaker.search.data\r\n\r\nimport com.example.playlistmaker.search.domain.Result\r\nimport com.example.playlistmaker.search.domain.TrackRepository\r\nimport com.example.playlistmaker.search.domain.models.Track\r\nimport kotlinx.coroutines.Dispatchers\r\nimport kotlinx.coroutines.withContext\r\n\r\nclass TrackRepositoryImpl(private val searchHistory: SearchHistory) : TrackRepository {\r\n    override suspend fun searchTracks(query: String): Result<List<Track>> =\r\n        withContext(Dispatchers.IO) {\r\n            try {\r\n                val response = RetrofitClient.apiService.search(query)\r\n                Result.Success(response.results.mapNotNull { dto ->\r\n                    try {\r\n                        dto.toDomain()\r\n                    } catch (_: Exception) {\r\n                        null\r\n                    }\r\n                })\r\n            } catch (e: Exception) {\r\n                Result.Failure(e)\r\n            }\r\n        }\r\n\r\n    override suspend fun getSearchHistory(): List<Track> = withContext(Dispatchers.IO) {\r\n        searchHistory.getHistory()\r\n    }\r\n\r\n    override suspend fun saveTrackToHistory(track: Track) = withContext(Dispatchers.IO) {\r\n        searchHistory.addTrack(track)\r\n    }\r\n\r\n    override suspend fun clearSearchHistory() = withContext(Dispatchers.IO) {\r\n        searchHistory.clearHistory()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/playlistmaker/search/data/TrackRepositoryImpl.kt b/app/src/main/java/com/example/playlistmaker/search/data/TrackRepositoryImpl.kt
+--- a/app/src/main/java/com/example/playlistmaker/search/data/TrackRepositoryImpl.kt	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/app/src/main/java/com/example/playlistmaker/search/data/TrackRepositoryImpl.kt	(date 1755812454682)
+@@ -1,6 +1,5 @@
+ package com.example.playlistmaker.search.data
+ 
+-import com.example.playlistmaker.search.domain.Result
+ import com.example.playlistmaker.search.domain.TrackRepository
+ import com.example.playlistmaker.search.domain.models.Track
+ import kotlinx.coroutines.Dispatchers
+Index: app/src/main/java/com/example/playlistmaker/search/ui/SearchActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.playlistmaker.search.ui\r\n\r\nimport android.annotation.SuppressLint\r\nimport android.content.Intent\r\nimport android.os.Bundle\r\nimport android.os.Handler\r\nimport android.os.Looper\r\nimport android.text.Editable\r\nimport android.text.TextWatcher\r\nimport android.view.MotionEvent\r\nimport android.widget.Button\r\nimport android.widget.EditText\r\nimport android.widget.LinearLayout\r\nimport android.widget.ProgressBar\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport androidx.appcompat.widget.Toolbar\r\nimport androidx.core.content.ContextCompat\r\nimport androidx.core.view.isVisible\r\nimport androidx.lifecycle.ViewModelProvider\r\nimport androidx.recyclerview.widget.LinearLayoutManager\r\nimport androidx.recyclerview.widget.RecyclerView\r\nimport com.example.playlistmaker.R\r\nimport com.example.playlistmaker.creator.Creator\r\nimport com.example.playlistmaker.player.ui.PlayerActivity\r\nimport com.example.playlistmaker.search.domain.Result\r\nimport com.example.playlistmaker.search.domain.models.Track\r\nimport retrofit2.HttpException\r\nimport java.io.IOException\r\n\r\nclass SearchActivity : AppCompatActivity() {\r\n    private lateinit var recyclerView: RecyclerView\r\n    private lateinit var adapter: TrackAdapter\r\n    private lateinit var placeholder: LinearLayout\r\n    private lateinit var errorPlaceholder: LinearLayout\r\n    private lateinit var refreshButton: Button\r\n    private lateinit var historyContainer: LinearLayout\r\n    private lateinit var historyRecyclerView: RecyclerView\r\n    private lateinit var clearHistoryButton: Button\r\n    private lateinit var progressBar: ProgressBar\r\n    private val handler = Handler(Looper.getMainLooper())\r\n    private var searchRunnable: Runnable? = null\r\n    private lateinit var viewModel: SearchViewModel\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_search)\r\n        val interactor = Creator.provideTrackInteractor(applicationContext)\r\n        viewModel =\r\n            ViewModelProvider(this, SearchViewModelFactory(interactor))[SearchViewModel::class.java]\r\n\r\n        val toolbar: Toolbar = findViewById(R.id.toolbar_search)\r\n        setSupportActionBar(toolbar)\r\n        toolbar.setNavigationOnClickListener { finish() }\r\n\r\n        val editText: EditText = findViewById(R.id.editText)\r\n        recyclerView = findViewById(R.id.recyclerView)\r\n        placeholder = findViewById(R.id.no_results_placeholder)\r\n        errorPlaceholder = findViewById(R.id.error_placeholder)\r\n        refreshButton = findViewById(R.id.refresh_button)\r\n        historyContainer = findViewById(R.id.history_container)\r\n        historyRecyclerView = findViewById(R.id.history_recycler_view)\r\n        clearHistoryButton = findViewById(R.id.clear_history_button)\r\n        progressBar = findViewById(R.id.progressBar)\r\n\r\n        recyclerView.layoutManager = LinearLayoutManager(this)\r\n        adapter = TrackAdapter(emptyList()) { track -> onTrackClicked(track) }\r\n        recyclerView.adapter = adapter\r\n\r\n        historyRecyclerView.layoutManager = LinearLayoutManager(this)\r\n        val historyAdapter = TrackAdapter(emptyList()) { track -> onTrackClicked(track) }\r\n        historyRecyclerView.adapter = historyAdapter\r\n\r\n        clearHistoryButton.setOnClickListener {\r\n            viewModel.clearHistory()\r\n        }\r\n\r\n        editText.setOnFocusChangeListener { _, hasFocus ->\r\n            updateHistoryVisibility(editText)\r\n        }\r\n        setupEditText(editText)\r\n        refreshButton.setOnClickListener {\r\n            searchTracks(editText.text.toString())\r\n        }\r\n\r\n        viewModel.searchResult.observe(this) { result ->\r\n            progressBar.isVisible = false\r\n            when (result) {\r\n                is Result.Success -> {\r\n                    val tracks = result.data\r\n                    if (tracks.isNotEmpty()) {\r\n                        adapter.updateTracks(tracks)\r\n                        placeholder.isVisible = false\r\n                        errorPlaceholder.isVisible = false\r\n                        recyclerView.isVisible = true\r\n                    } else {\r\n                        adapter.updateTracks(emptyList())\r\n                        placeholder.isVisible = true\r\n                        errorPlaceholder.isVisible = false\r\n                        recyclerView.isVisible = false\r\n                    }\r\n                }\r\n\r\n                is Result.Failure -> {\r\n                    adapter.updateTracks(emptyList())\r\n                    if (result.exception is HttpException || result.exception is IOException) {\r\n                        errorPlaceholder.isVisible = true\r\n                        placeholder.isVisible = false\r\n                    } else {\r\n                        placeholder.isVisible = true\r\n                        errorPlaceholder.isVisible = false\r\n                    }\r\n                    recyclerView.isVisible = false\r\n                }\r\n            }\r\n        }\r\n\r\n        viewModel.history.observe(this) { history ->\r\n            historyAdapter.updateTracks(history)\r\n            val shouldShowHistory = editText.text.isEmpty() && editText.hasFocus()\r\n            historyContainer.isVisible = shouldShowHistory && history.isNotEmpty()\r\n            recyclerView.isVisible =\r\n                !shouldShowHistory && !placeholder.isVisible && !errorPlaceholder.isVisible\r\n        }\r\n    }\r\n\r\n    private fun onTrackClicked(track: Track) {\r\n        viewModel.saveToHistory(track)\r\n        val intent = Intent(this, PlayerActivity::class.java).apply {\r\n            putExtra(PlayerActivity.TRACK_KEY, track)\r\n        }\r\n        startActivity(intent)\r\n    }\r\n\r\n    private fun updateHistoryVisibility(editText: EditText) {\r\n        val shouldShowHistory = editText.text.isEmpty() && editText.hasFocus()\r\n        if (shouldShowHistory) {\r\n            viewModel.getHistory()\r\n        } else {\r\n            historyContainer.isVisible = false\r\n        }\r\n    }\r\n\r\n    @SuppressLint(\"ClickableViewAccessibility\")\r\n    private fun setupEditText(editText: EditText) {\r\n        editText.addTextChangedListener(object : TextWatcher {\r\n            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}\r\n            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {\r\n                updateClearButtonVisibility(editText, s)\r\n                searchRunnable?.let { handler.removeCallbacks(it) }\r\n                if (s?.isNotEmpty() == true) {\r\n                    searchRunnable = Runnable { searchTracks(s.toString()) }\r\n                    handler.postDelayed(searchRunnable!!, 2000L)\r\n                } else {\r\n                    adapter.updateTracks(emptyList())\r\n                    placeholder.isVisible = false\r\n                    errorPlaceholder.isVisible = false\r\n                    progressBar.isVisible = false\r\n                    updateHistoryVisibility(editText)\r\n                }\r\n            }\r\n\r\n            override fun afterTextChanged(s: Editable?) {}\r\n        })\r\n\r\n        editText.setOnTouchListener { v, event ->\r\n            if (event.action == MotionEvent.ACTION_UP) {\r\n                val drawableEnd = editText.compoundDrawablesRelative[2]\r\n                if (drawableEnd != null && event.x >= (editText.width - editText.paddingEnd - drawableEnd.bounds.width())) {\r\n                    editText.text.clear()\r\n                    adapter.updateTracks(emptyList())\r\n                    placeholder.isVisible = false\r\n                    errorPlaceholder.isVisible = false\r\n                    progressBar.isVisible = false\r\n                    handler.removeCallbacks(searchRunnable ?: return@setOnTouchListener true)\r\n                    updateHistoryVisibility(editText)\r\n                    return@setOnTouchListener true\r\n                }\r\n            }\r\n            false\r\n        }\r\n    }\r\n\r\n    private fun updateClearButtonVisibility(editText: EditText, text: CharSequence?) {\r\n        val drawable = if (!text.isNullOrEmpty()) ContextCompat.getDrawable(\r\n            this,\r\n            R.drawable.clear_button_icon\r\n        ) else null\r\n        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)\r\n    }\r\n\r\n    private fun searchTracks(query: String) {\r\n        progressBar.isVisible = true\r\n        placeholder.isVisible = false\r\n        errorPlaceholder.isVisible = false\r\n        recyclerView.isVisible = false\r\n        viewModel.searchTracks(query)\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/playlistmaker/search/ui/SearchActivity.kt b/app/src/main/java/com/example/playlistmaker/search/ui/SearchActivity.kt
+--- a/app/src/main/java/com/example/playlistmaker/search/ui/SearchActivity.kt	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/app/src/main/java/com/example/playlistmaker/search/ui/SearchActivity.kt	(date 1755812672664)
+@@ -22,7 +22,6 @@
+ import com.example.playlistmaker.R
+ import com.example.playlistmaker.creator.Creator
+ import com.example.playlistmaker.player.ui.PlayerActivity
+-import com.example.playlistmaker.search.domain.Result
+ import com.example.playlistmaker.search.domain.models.Track
+ import retrofit2.HttpException
+ import java.io.IOException
+@@ -121,6 +120,7 @@
+             recyclerView.isVisible =
+                 !shouldShowHistory && !placeholder.isVisible && !errorPlaceholder.isVisible
+         }
++
+     }
+ 
+     private fun onTrackClicked(track: Track) {
+@@ -181,11 +181,12 @@
+     }
+ 
+     private fun updateClearButtonVisibility(editText: EditText, text: CharSequence?) {
++        val leftDrawable = editText.compoundDrawablesRelative[0]
+         val drawable = if (!text.isNullOrEmpty()) ContextCompat.getDrawable(
+             this,
+             R.drawable.clear_button_icon
+         ) else null
+-        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
++        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(leftDrawable, null, drawable, null)
+     }
+ 
+     private fun searchTracks(query: String) {
+Index: app/src/main/java/com/example/playlistmaker/search/domain/Result.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/playlistmaker/search/domain/Result.kt b/app/src/main/java/com/example/playlistmaker/search/domain/Result.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/playlistmaker/search/domain/Result.kt	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ /dev/null	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
+@@ -1,6 +0,0 @@
+-package com.example.playlistmaker.search.domain
+-
+-sealed class Result<out T> {
+-    data class Success<out T>(val data: T) : Result<T>()
+-    data class Failure(val exception: Exception) : Result<Nothing>()
+-}
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>*.iml\r\n.gradle\r\n/local.properties\r\n/.idea/caches\r\n/.idea/libraries\r\n/.idea/modules.xml\r\n/.idea/workspace.xml\r\n/.idea/navEditor.xml\r\n/.idea/assetWizardSettings.xml\r\n.DS_Store\r\n/build\r\n/captures\r\n.externalNativeBuild\r\n.cxx\r\nlocal.properties\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/.gitignore	(date 1755809348053)
+@@ -13,3 +13,4 @@
+ .externalNativeBuild
+ .cxx
+ local.properties
++/.idea/
+Index: app/src/main/java/com/example/playlistmaker/player/ui/PlayerViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.playlistmaker.player.ui\r\n\r\nimport android.os.Handler\r\nimport android.os.Looper\r\nimport androidx.lifecycle.LiveData\r\nimport androidx.lifecycle.MutableLiveData\r\nimport androidx.lifecycle.ViewModel\r\nimport com.example.playlistmaker.player.domain.PlayerInteractor\r\nimport com.example.playlistmaker.search.domain.models.Track\r\n\r\nclass PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {\r\n    private val _currentTime = MutableLiveData<String>()\r\n    val currentTime: LiveData<String> get() = _currentTime\r\n\r\n    private val _isPlaying = MutableLiveData<Boolean>()\r\n    val isPlaying: LiveData<Boolean> get() = _isPlaying\r\n\r\n    private val handler = Handler(Looper.getMainLooper())\r\n    private var updateTask: Runnable? = null\r\n\r\n    fun prepare(track: Track) {\r\n        interactor.preparePlayer(track)\r\n        _currentTime.value = \"0:00\"\r\n        _isPlaying.value = false\r\n    }\r\n\r\n    fun playbackControl() {\r\n        if (interactor.isPlaying()) {\r\n            interactor.pause()\r\n            _isPlaying.value = false\r\n            stopTimer()\r\n        } else {\r\n            interactor.play()\r\n            _isPlaying.value = true\r\n            startTimer()\r\n        }\r\n    }\r\n\r\n    private fun startTimer() {\r\n        updateTask = Runnable {\r\n            _currentTime.value = interactor.getCurrentPosition()\r\n            if (interactor.isPlaying()) {\r\n                handler.postDelayed(updateTask!!, 300)\r\n            } else {\r\n                _currentTime.value = \"0:00\"\r\n                _isPlaying.value = false\r\n                handler.removeCallbacks(updateTask!!)\r\n            }\r\n        }\r\n        handler.post(updateTask!!)\r\n    }\r\n\r\n    private fun stopTimer() {\r\n        handler.removeCallbacks(updateTask ?: return)\r\n    }\r\n\r\n    override fun onCleared() {\r\n        super.onCleared()\r\n        interactor.stop()\r\n        stopTimer()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/playlistmaker/player/ui/PlayerViewModel.kt b/app/src/main/java/com/example/playlistmaker/player/ui/PlayerViewModel.kt
+--- a/app/src/main/java/com/example/playlistmaker/player/ui/PlayerViewModel.kt	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/app/src/main/java/com/example/playlistmaker/player/ui/PlayerViewModel.kt	(date 1755810739733)
+@@ -7,6 +7,8 @@
+ import androidx.lifecycle.ViewModel
+ import com.example.playlistmaker.player.domain.PlayerInteractor
+ import com.example.playlistmaker.search.domain.models.Track
++import java.text.SimpleDateFormat
++import java.util.Locale
+ 
+ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
+     private val _currentTime = MutableLiveData<String>()
+@@ -20,10 +22,14 @@
+ 
+     fun prepare(track: Track) {
+         interactor.preparePlayer(track)
+-        _currentTime.value = "0:00"
++        _currentTime.value = formatTime(0)
+         _isPlaying.value = false
+     }
+ 
++    private fun formatTime(millis: Int): String {
++        return SimpleDateFormat("m:ss", Locale.getDefault()).format(millis)
++    }
++
+     fun playbackControl() {
+         if (interactor.isPlaying()) {
+             interactor.pause()
+@@ -42,7 +48,7 @@
+             if (interactor.isPlaying()) {
+                 handler.postDelayed(updateTask!!, 300)
+             } else {
+-                _currentTime.value = "0:00"
++                _currentTime.value = formatTime(0)
+                 _isPlaying.value = false
+                 handler.removeCallbacks(updateTask!!)
+             }
+@@ -51,7 +57,8 @@
+     }
+ 
+     private fun stopTimer() {
+-        handler.removeCallbacks(updateTask ?: return)
++        val task = updateTask ?: return
++        handler.removeCallbacks(task)
+     }
+ 
+     override fun onCleared() {
+Index: app/src/main/res/drawable/track_placeholder.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"35dp\"\r\n    android:height=\"35dp\"\r\n    android:viewportWidth=\"35\"\r\n    android:viewportHeight=\"35\">\r\n    <path\r\n        android:fillColor=\"#AEAFB4\"\r\n        android:pathData=\"M3.606,7.919C4.919,6.588 6.231,5.387 6.813,5.631C7.75,6.006 6.813,7.563 6.25,8.481C5.781,9.269 0.888,15.775 0.888,20.313C0.888,22.712 1.788,24.7 3.4,25.9C4.806,26.95 6.663,27.269 8.35,26.763C10.356,26.181 12.006,24.138 14.087,21.569C16.356,18.775 19.394,15.119 21.737,15.119C24.794,15.119 24.831,17.013 25.038,18.475C17.95,19.675 14.95,25.356 14.95,28.544C14.95,31.731 17.65,34.338 20.969,34.338C24.025,34.338 29.013,31.844 29.763,22.9H34.375V18.212H29.744C29.462,15.119 27.7,10.337 22.188,10.337C17.969,10.337 14.35,13.919 12.925,15.663C11.837,17.031 9.063,20.313 8.631,20.763C8.163,21.325 7.356,22.337 6.55,22.337C5.706,22.337 5.2,20.781 5.875,18.737C6.531,16.694 8.5,13.375 9.344,12.137C10.806,10 11.781,8.538 11.781,5.988C11.781,1.919 8.706,0.625 7.075,0.625C4.6,0.625 2.444,2.5 1.975,2.969C1.3,3.644 0.738,4.206 0.325,4.713L3.606,7.919ZM21.025,29.781C20.444,29.781 19.638,29.294 19.638,28.431C19.638,27.306 21.006,24.306 25.019,23.256C24.456,28.3 22.337,29.781 21.025,29.781Z\" />\r\n</vector>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/track_placeholder.xml b/app/src/main/res/drawable/track_placeholder.xml
+--- a/app/src/main/res/drawable/track_placeholder.xml	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/app/src/main/res/drawable/track_placeholder.xml	(date 1755808215875)
+@@ -1,8 +1,8 @@
+ <vector xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:width="35dp"
+-    android:height="35dp"
+-    android:viewportWidth="35"
+-    android:viewportHeight="35">
++    android:width="45dp"
++    android:height="45dp"
++    android:viewportWidth="45"
++    android:viewportHeight="45">
+     <path
+         android:fillColor="#AEAFB4"
+         android:pathData="M3.606,7.919C4.919,6.588 6.231,5.387 6.813,5.631C7.75,6.006 6.813,7.563 6.25,8.481C5.781,9.269 0.888,15.775 0.888,20.313C0.888,22.712 1.788,24.7 3.4,25.9C4.806,26.95 6.663,27.269 8.35,26.763C10.356,26.181 12.006,24.138 14.087,21.569C16.356,18.775 19.394,15.119 21.737,15.119C24.794,15.119 24.831,17.013 25.038,18.475C17.95,19.675 14.95,25.356 14.95,28.544C14.95,31.731 17.65,34.338 20.969,34.338C24.025,34.338 29.013,31.844 29.763,22.9H34.375V18.212H29.744C29.462,15.119 27.7,10.337 22.188,10.337C17.969,10.337 14.35,13.919 12.925,15.663C11.837,17.031 9.063,20.313 8.631,20.763C8.163,21.325 7.356,22.337 6.55,22.337C5.706,22.337 5.2,20.781 5.875,18.737C6.531,16.694 8.5,13.375 9.344,12.137C10.806,10 11.781,8.538 11.781,5.988C11.781,1.919 8.706,0.625 7.075,0.625C4.6,0.625 2.444,2.5 1.975,2.969C1.3,3.644 0.738,4.206 0.325,4.713L3.606,7.919ZM21.025,29.781C20.444,29.781 19.638,29.294 19.638,28.431C19.638,27.306 21.006,24.306 25.019,23.256C24.456,28.3 22.337,29.781 21.025,29.781Z" />
+Index: app/src/main/res/values/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <style name=\"Base.Theme.PlaylistMaker.StatusBar\" parent=\"Theme.MaterialComponents.DayNight.NoActionBar\">\r\n        <item name=\"android:statusBarColor\">@android:color/transparent</item>\r\n        <item name=\"android:windowTranslucentStatus\">true</item>\r\n        <item name=\"android:windowDrawsSystemBarBackgrounds\">true</item>\r\n    </style>\r\n\r\n    <style name=\"Base.Theme.PlaylistMaker.ActivityMain\" parent=\"Base.Theme.PlaylistMaker.StatusBar\">\r\n        <item name=\"android:background\">@color/activityMainBackground</item>\r\n    </style>\r\n\r\n    <style name=\"Base.Theme.PlaylistMaker.ActivitySecondary\" parent=\"Base.Theme.PlaylistMaker.StatusBar\">\r\n        <item name=\"android:background\">@color/activitySecondaryBackground</item>\r\n    </style>\r\n\r\n    <style name=\"CustomSwitch\" parent=\"TextActivitySettings\">\r\n        <item name=\"thumbTint\">@color/yp_text_gray</item>\r\n        <item name=\"trackTint\">@color/yp_light_gray</item>\r\n    </style>\r\n\r\n    <style name=\"CustomEditText\" parent=\"Widget.AppCompat.EditText\">\r\n        <item name=\"android:background\">@color/yp_light_gray</item>\r\n        <item name=\"android:textColorHint\">@color/yp_text_gray</item>\r\n    </style>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/app/src/main/res/values/themes.xml	(date 1755806818190)
+@@ -1,4 +1,5 @@
+ <resources>
++
+     <style name="Base.Theme.PlaylistMaker.StatusBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+         <item name="android:statusBarColor">@android:color/transparent</item>
+         <item name="android:windowTranslucentStatus">true</item>
+Index: app/src/main/res/layout/activity_search.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FrameLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <LinearLayout\r\n        android:id=\"@+id/main_container\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:fitsSystemWindows=\"true\"\r\n        android:orientation=\"vertical\"\r\n        tools:ignore=\"UselessParent\">\r\n\r\n        <androidx.appcompat.widget.Toolbar\r\n            android:id=\"@+id/toolbar_search\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            app:navigationIcon=\"@drawable/back\"\r\n            app:title=\"@string/search\" />\r\n\r\n        <EditText\r\n            android:id=\"@+id/editText\"\r\n            style=\"@style/CustomEditText\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginStart=\"@dimen/_16dp\"\r\n            android:layout_marginTop=\"@dimen/_8dp\"\r\n            android:layout_marginEnd=\"@dimen/_16dp\"\r\n            android:layout_marginBottom=\"@dimen/_8dp\"\r\n            android:background=\"@drawable/rounded_edittext\"\r\n            android:drawableStart=\"@drawable/search_edit_text\"\r\n            android:drawablePadding=\"@dimen/_8dp\"\r\n            android:fontFamily=\"@font/ys_display_regular\"\r\n            android:hint=\"@string/search\"\r\n            android:imeOptions=\"actionNone\"\r\n            android:inputType=\"text\"\r\n            android:maxLines=\"1\"\r\n            android:minHeight=\"36dp\"\r\n            android:paddingStart=\"@dimen/_12dp\"\r\n            android:paddingEnd=\"14dp\"\r\n            android:singleLine=\"true\"\r\n            android:textColor=\"@color/yp_black\"\r\n            android:textCursorDrawable=\"@drawable/cursor_blue\"\r\n            tools:ignore=\"Autofill,DuplicateSpeakableTextCheck,TextContrastCheck,TouchTargetSizeCheck,VisualLintTextFieldSize\" />\r\n\r\n        <FrameLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\">\r\n\r\n            <LinearLayout\r\n                android:id=\"@+id/history_container\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\"\r\n                android:paddingTop=\"32dp\"\r\n                android:visibility=\"gone\">\r\n\r\n                <TextView\r\n                    android:id=\"@+id/history_title\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:fontFamily=\"@font/ys_display_regular\"\r\n                    android:gravity=\"center_horizontal\"\r\n                    android:paddingTop=\"@dimen/_16dp\"\r\n                    android:paddingBottom=\"@dimen/_8dp\"\r\n                    android:text=\"@string/search_history_title\"\r\n                    android:textColor=\"@color/textsSearchActivity\"\r\n                    android:textSize=\"19sp\" />\r\n\r\n                <androidx.recyclerview.widget.RecyclerView\r\n                    android:id=\"@+id/history_recycler_view\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"8dp\"\r\n                    android:layout_marginBottom=\"16dp\"\r\n                    tools:listitem=\"@layout/item_track\" />\r\n\r\n                <com.google.android.material.button.MaterialButton\r\n                    android:id=\"@+id/clear_history_button\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_gravity=\"center_horizontal\"\r\n                    android:backgroundTint=\"@color/buttonsSearchActivityBackground\"\r\n                    android:fontFamily=\"@font/ys_display_regular\"\r\n                    android:text=\"@string/clear_history\"\r\n                    android:textAllCaps=\"false\"\r\n                    android:textColor=\"@color/textsSearchActivityButton\"\r\n                    android:textSize=\"14sp\"\r\n                    app:cornerRadius=\"54dp\" />\r\n            </LinearLayout>\r\n\r\n            <androidx.recyclerview.widget.RecyclerView\r\n                android:id=\"@+id/recyclerView\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                tools:ignore=\"SpeakableTextPresentCheck\"\r\n                tools:listitem=\"@layout/item_track\" />\r\n\r\n            <LinearLayout\r\n                android:id=\"@+id/no_results_placeholder\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                android:gravity=\"center\"\r\n                android:orientation=\"vertical\"\r\n                android:visibility=\"gone\"\r\n                tools:ignore=\"UseCompoundDrawables\">\r\n\r\n                <ImageView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:contentDescription=\"@string/no_results\"\r\n                    android:src=\"@drawable/placeholder_no_results\" />\r\n\r\n                <TextView\r\n                    style=\"@style/TextSearchPlaceholders\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"@string/no_results\" />\r\n            </LinearLayout>\r\n\r\n            <LinearLayout\r\n                android:id=\"@+id/error_placeholder\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                android:gravity=\"center\"\r\n                android:orientation=\"vertical\"\r\n                android:visibility=\"gone\">\r\n\r\n                <ImageView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:contentDescription=\"@string/server_error\"\r\n                    android:src=\"@drawable/placeholder_error\" />\r\n\r\n                <TextView\r\n                    style=\"@style/TextSearchPlaceholders\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginStart=\"24dp\"\r\n                    android:layout_marginTop=\"16dp\"\r\n                    android:layout_marginEnd=\"24dp\"\r\n                    android:gravity=\"center\"\r\n                    android:lineSpacingExtra=\"4dp\"\r\n                    android:text=\"@string/server_error\" />\r\n\r\n                <com.google.android.material.button.MaterialButton\r\n                    android:id=\"@+id/refresh_button\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"24dp\"\r\n                    android:backgroundTint=\"@color/buttonsSearchActivityBackground\"\r\n                    android:fontFamily=\"@font/ys_display_regular\"\r\n                    android:text=\"@string/refresh\"\r\n                    android:textAllCaps=\"false\"\r\n                    android:textColor=\"@color/textsSearchActivityButton\"\r\n                    app:cornerRadius=\"54dp\" />\r\n            </LinearLayout>\r\n\r\n            <ProgressBar\r\n                android:id=\"@+id/progressBar\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_gravity=\"center\"\r\n                android:indeterminateDrawable=\"@drawable/surface\"\r\n                android:visibility=\"gone\" />\r\n        </FrameLayout>\r\n    </LinearLayout>\r\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_search.xml b/app/src/main/res/layout/activity_search.xml
+--- a/app/src/main/res/layout/activity_search.xml	(revision 23724d022a6a175baea838b11cd5627eb73c7008)
++++ b/app/src/main/res/layout/activity_search.xml	(date 1755810642949)
+@@ -163,7 +163,8 @@
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+-                android:indeterminateDrawable="@drawable/surface"
++                android:indeterminate="true"
++                android:indeterminateTint="@color/yp_blue"
+                 android:visibility="gone" />
+         </FrameLayout>
+     </LinearLayout>

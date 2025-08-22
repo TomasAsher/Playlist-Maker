@@ -14,25 +14,25 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.SearchActivity"
+            android:name=".search.ui.SearchActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />
         <activity
-            android:name=".presentation.ui.PlayerActivity"
+            android:name=".player.ui.PlayerActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:configChanges="orientation|screenSize"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />
         <activity
-            android:name=".presentation.ui.MediaActivity"
+            android:name=".mediateka.ui.MediaActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />
         <activity
-            android:name=".presentation.ui.SettingsActivity"
+            android:name=".settings.ui.SettingsActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivitySecondary" />
         <activity
-            android:name=".presentation.ui.MainActivity"
+            android:name=".main.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker.ActivityMain">
             <intent-filter>
