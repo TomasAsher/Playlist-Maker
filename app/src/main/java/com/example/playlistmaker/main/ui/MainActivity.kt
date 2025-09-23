@@ -5,25 +5,21 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.mediateka.ui.MediaActivity
 import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.settings.ui.SettingsActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModel()
     private lateinit var buttonSearch: Button
     private lateinit var buttonMedia: Button
     private lateinit var buttonSettings: Button
-    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            MainViewModelFactory(Creator.provideThemeInteractor(this))
-        )[MainViewModel::class.java]
+
         val isSystemDarkTheme =
             (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         viewModel.syncWithSystem(isSystemDarkTheme)
