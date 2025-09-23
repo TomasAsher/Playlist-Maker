@@ -13,12 +13,15 @@ import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
+private const val THEME_PREFS_NAME = "theme_prefs"
+private const val APP_PREFS_NAME = "app_prefs"
+
 val dataModule = module {
     single<MediaPlayer> { MediaPlayer() }
     single<Gson> { Gson() }
 
-    single { androidContext().getSharedPreferences("theme_prefs", Context.MODE_PRIVATE) }
-    single { androidContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE) }
+    single { androidContext().getSharedPreferences(THEME_PREFS_NAME, Context.MODE_PRIVATE) }
+    single { androidContext().getSharedPreferences(APP_PREFS_NAME, Context.MODE_PRIVATE) }
 
     single<ThemeRepository> { ThemePreferences(get()) }
     single<SearchHistory> { SearchHistory(get(), get()) }
