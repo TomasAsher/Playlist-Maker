@@ -11,21 +11,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        val interactor = Creator.provideThemeInteractor(this)
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModelFactory(interactor)
-        )[SettingsViewModel::class.java]
+
         viewModel.loadTheme()
 
         val themeSwitch = findViewById<SwitchCompat>(R.id.theme_switch)

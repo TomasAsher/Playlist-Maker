@@ -16,18 +16,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.Result
 import com.example.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.HttpException
 import java.io.IOException
 
 class SearchActivity : AppCompatActivity() {
+    private val viewModel: SearchViewModel by viewModel()
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TrackAdapter
     private lateinit var placeholder: LinearLayout
@@ -39,14 +39,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
-    private lateinit var viewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        val interactor = Creator.provideTrackInteractor(applicationContext)
-        viewModel =
-            ViewModelProvider(this, SearchViewModelFactory(interactor))[SearchViewModel::class.java]
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_search)
         setSupportActionBar(toolbar)

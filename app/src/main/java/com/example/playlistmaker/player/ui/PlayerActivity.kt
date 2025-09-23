@@ -6,18 +6,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
     companion object {
         const val TRACK_KEY = "track"
     }
 
+    private val viewModel: PlayerViewModel by viewModel()
     private lateinit var albumCover: ImageView
     private lateinit var trackName: TextView
     private lateinit var artistName: TextView
@@ -29,15 +29,10 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var countryLabel: TextView
     private lateinit var playPauseButton: ImageView
     private var track: Track? = null
-    private lateinit var viewModel: PlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModelFactory(Creator.providePlayerInteractor())
-        )[PlayerViewModel::class.java]
 
         initViews()
         setupToolbar()
@@ -115,9 +110,5 @@ class PlayerActivity : AppCompatActivity() {
         if (viewModel.isPlaying.value == true) {
             viewModel.playbackControl()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }
