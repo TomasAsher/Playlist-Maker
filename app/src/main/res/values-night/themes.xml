@@ -1,4 +1,5 @@
 <resources>
+
     <style name="Base.Theme.PlaylistMaker.StatusBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
@@ -22,4 +23,5 @@
         <item name="android:background">@color/yp_white</item>
         <item name="android:textColorHint">@color/yp_black</item>
     </style>
+
 </resources>

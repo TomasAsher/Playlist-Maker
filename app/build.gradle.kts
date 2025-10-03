@@ -13,6 +13,11 @@ android {
     namespace = "com.example.playlistmaker"
     compileSdk = 36
 
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.playlistmaker"
         minSdk = 29
@@ -58,5 +63,6 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.viewpager2)
 
 }

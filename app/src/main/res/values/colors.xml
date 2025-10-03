@@ -24,4 +24,9 @@
     <color name="textsSearchActivity">@color/yp_black</color>
 
     <color name="textsPlayer">@color/yp_black</color>
+
+    <color name="tabColor">@color/yp_black</color>
+    <color name="tabTextColor">@color/yp_black</color>
+    <color name="media_playlist_button_text_color">@color/yp_white</color>
+    <color name="media_playlist_button_background_color">@color/yp_black</color>
 </resources>
