@@ -41,8 +41,8 @@ class MediaActivity : AppCompatActivity() {
 
     private fun setupViewPager() {
         val fragments = listOf(
-            FavoritesFragment() to getString(R.string.favorites),
-            PlaylistsFragment() to getString(R.string.playlists)
+            FavoritesFragment.newInstance() to getString(R.string.favorites),
+            PlaylistsFragment.newInstance() to getString(R.string.playlists)
         )
 
         binding.viewPager.adapter = MediaPagerAdapter(this, fragments.map { it.first })

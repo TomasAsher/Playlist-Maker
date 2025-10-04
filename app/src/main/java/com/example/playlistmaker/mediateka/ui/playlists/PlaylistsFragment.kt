@@ -13,6 +13,10 @@ class PlaylistsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: PlaylistsViewModel by viewModel()
 
+    companion object {
+        fun newInstance() = PlaylistsFragment()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
