@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item_media"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_mediateka"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:navigationIcon="@drawable/back"
         app:title="@string/media" />
 
     <com.google.android.material.tabs.TabLayout
@@ -23,8 +21,7 @@
         app:tabIndicatorHeight="2dp"
         app:tabMode="fixed"
         app:tabTextAppearance="@style/TabTextApperance"
-        app:tabTextColor="@color/tabTextColor"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:tabTextColor="@color/tabTextColor" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

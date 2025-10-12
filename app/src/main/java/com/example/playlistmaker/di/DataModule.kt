@@ -1,7 +1,6 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
-import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.PlayerRepository
 import com.example.playlistmaker.search.data.SearchHistory
@@ -17,7 +16,6 @@ private const val THEME_PREFS_NAME = "theme_prefs"
 private const val APP_PREFS_NAME = "app_prefs"
 
 val dataModule = module {
-    single<MediaPlayer> { MediaPlayer() }
     single<Gson> { Gson() }
 
     single { androidContext().getSharedPreferences(THEME_PREFS_NAME, Context.MODE_PRIVATE) }
@@ -26,5 +24,5 @@ val dataModule = module {
     single<ThemeRepository> { ThemePreferences(get()) }
     single<SearchHistory> { SearchHistory(get(), get()) }
     single<TrackRepository> { TrackRepositoryImpl(get()) }
-    single<PlayerRepository> { PlayerRepositoryImpl(get()) }
+    single<PlayerRepository> { PlayerRepositoryImpl() }
 }
