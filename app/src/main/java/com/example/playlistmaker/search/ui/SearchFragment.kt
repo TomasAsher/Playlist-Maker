@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.Result
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
@@ -31,16 +32,35 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private lateinit var historyAdapter: TrackAdapter
     private var searchJob: Job? = null
 
+    private var currentQuery: String = ""
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSearchBinding.bind(view)
+
+        savedInstanceState?.let {
+            currentQuery = it.getString(KEY_CURRENT_QUERY, "")
+            binding.editText.setText(currentQuery)
+        }
+
         setupRecyclerView()
         setupHistoryRecyclerView()
         setupSearchEditText()
         setupObservers()
         setupRefreshButton()
         setupClearHistoryButton()
-        viewModel.getHistory()
+
+        if (currentQuery.isNotEmpty()) {
+            showProgress()
+            viewModel.searchTracks(currentQuery)
+        } else {
+            viewModel.getHistory()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_CURRENT_QUERY, currentQuery)
     }
 
     private fun setupRecyclerView() {
@@ -80,11 +100,13 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         viewModel.history.observe(viewLifecycleOwner) { history ->
-            if (history.isNotEmpty()) {
-                historyAdapter.updateTracks(history)
-                showHistory()
-            } else {
-                hideHistory()
+            if (currentQuery.isEmpty()) {
+                if (history.isNotEmpty()) {
+                    historyAdapter.updateTracks(history)
+                    showHistory()
+                } else {
+                    hideHistory()
+                }
             }
         }
     }
@@ -122,11 +144,17 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun hideHistory() {
         binding.historyContainer.isVisible = false
+        binding.recyclerView.isVisible = false
+        binding.noResultsPlaceholder.isVisible = false
+        binding.errorPlaceholder.isVisible = false
     }
 
     private fun onTrackClicked(track: Track) {
         viewModel.saveToHistory(track)
-        val bundle = bundleOf("track" to track)
+        val bundle = bundleOf(
+            PlayerFragment.TRACK_KEY to track,
+            "showBottomNavigation" to false
+        )
         findNavController().navigate(
             R.id.action_searchFragment_to_playerFragment,
             bundle
@@ -141,9 +169,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 updateClearButtonVisibility(s)
                 searchJob?.cancel()
 
+                currentQuery = s?.toString() ?: ""
+
                 if (s?.isNotEmpty() == true) {
                     searchJob = kotlinx.coroutines.MainScope().launch {
-                        delay(2000)
+                        delay(SEARCH_DEBOUNCE_DELAY)
                         showProgress()
                         viewModel.searchTracks(s.toString())
                     }
@@ -165,6 +195,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 val drawableEnd = binding.editText.compoundDrawablesRelative[2]
                 if (drawableEnd != null && event.x >= (binding.editText.width - binding.editText.paddingEnd - drawableEnd.bounds.width())) {
                     binding.editText.text.clear()
+                    currentQuery = ""
                     searchAdapter.updateTracks(emptyList())
                     binding.noResultsPlaceholder.isVisible = false
                     binding.errorPlaceholder.isVisible = false
@@ -224,5 +255,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     companion object {
         fun newInstance() = SearchFragment()
+
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val KEY_CURRENT_QUERY = "current_query"
     }
 }

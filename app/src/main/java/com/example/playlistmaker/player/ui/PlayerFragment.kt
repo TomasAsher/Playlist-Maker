@@ -33,7 +33,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     }
 
     private fun getTrackFromArguments() {
-        track = arguments?.getParcelable("track")
+        track = arguments?.getParcelable(TRACK_KEY)
     }
 
     private fun setupPlayer() {
@@ -94,10 +94,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     }
 
     companion object {
+        const val TRACK_KEY = "track"
+
         fun newInstance(track: Track): PlayerFragment {
             return PlayerFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable("track", track)
+                    putParcelable(TRACK_KEY, track)
                 }
             }
         }

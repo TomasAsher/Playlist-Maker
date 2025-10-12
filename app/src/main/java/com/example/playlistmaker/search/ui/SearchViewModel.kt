@@ -16,7 +16,10 @@ class SearchViewModel(private val interactor: TrackInteractor) : ViewModel() {
     private val _history = MutableLiveData<List<Track>>()
     val history: LiveData<List<Track>> get() = _history
 
+    private var lastSearchQuery: String? = null
+
     fun searchTracks(query: String) {
+        lastSearchQuery = query
         viewModelScope.launch {
             _searchResult.value = interactor.searchTracks(query)
         }
