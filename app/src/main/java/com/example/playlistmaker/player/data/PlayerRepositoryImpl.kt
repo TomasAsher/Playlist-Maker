@@ -5,12 +5,11 @@ import com.example.playlistmaker.player.domain.PlayerRepository
 import com.example.playlistmaker.search.domain.models.Track
 import java.io.IOException
 
-class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRepository {
-    private var playerState = 0
-    private var currentTrack: Track? = null
+class PlayerRepositoryImpl : PlayerRepository {
+    private val mediaPlayer = MediaPlayer()
+    private var isPrepared = false
 
     override fun preparePlayer(track: Track) {
-        currentTrack = track
         try {
             mediaPlayer.reset()
             track.previewUrl?.let { url ->
@@ -18,58 +17,56 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
                     mediaPlayer.setDataSource(url)
                     mediaPlayer.prepareAsync()
                     mediaPlayer.setOnPreparedListener {
-                        playerState = 1
+                        isPrepared = true
                     }
                     mediaPlayer.setOnCompletionListener {
-                        playerState = 1
+                        isPrepared = true
                         mediaPlayer.seekTo(0)
                     }
                     mediaPlayer.setOnErrorListener { _, _, _ ->
-                        playerState = 0
+                        isPrepared = false
                         false
                     }
                 } else {
-                    playerState = 0
+                    isPrepared = false
                 }
             } ?: run {
-                playerState = 0
+                isPrepared = false
             }
         } catch (_: IOException) {
-            playerState = 0
+            isPrepared = false
         }
     }
 
     override fun startPlayer() {
-        if (playerState == 1) {
+        if (isPrepared) {
             try {
                 mediaPlayer.start()
-                playerState = 2
             } catch (_: IllegalStateException) {
-                playerState = 0
+                isPrepared = false
             }
         }
     }
 
     override fun pausePlayer() {
-        if (playerState == 2) {
+        if (isPrepared && mediaPlayer.isPlaying) {
             mediaPlayer.pause()
-            playerState = 1
         }
     }
 
     override fun stopPlayer() {
-        if (playerState != 0) {
+        if (isPrepared) {
             mediaPlayer.stop()
             mediaPlayer.reset()
-            playerState = 0
+            isPrepared = false
         }
     }
 
     override fun getCurrentPosition(): Int {
-        return if (playerState in 1..3) mediaPlayer.currentPosition else 0
+        return if (isPrepared) mediaPlayer.currentPosition else 0
     }
 
     override fun isPlaying(): Boolean {
-        return playerState == 2 && mediaPlayer.isPlaying
+        return isPrepared && mediaPlayer.isPlaying
     }
 }

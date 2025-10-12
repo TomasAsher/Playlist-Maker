@@ -57,13 +57,13 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     private fun stopTimer() {
-        val task = updateTask ?: return
-        handler.removeCallbacks(task)
+        updateTask?.let { handler.removeCallbacks(it) }
     }
 
     override fun onCleared() {
         super.onCleared()
         interactor.stop()
         stopTimer()
+        handler.removeCallbacksAndMessages(null)
     }
 }
