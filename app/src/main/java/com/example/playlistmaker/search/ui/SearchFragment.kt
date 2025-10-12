@@ -50,10 +50,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         setupRefreshButton()
         setupClearHistoryButton()
 
-        if (currentQuery.isNotEmpty()) {
-            showProgress()
-            viewModel.searchTracks(currentQuery)
-        } else {
+        if (currentQuery.isEmpty()) {
             viewModel.getHistory()
         }
     }
