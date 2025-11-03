@@ -8,6 +8,7 @@ import com.example.playlistmaker.search.domain.Result
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -20,6 +21,15 @@ class SearchViewModel(private val interactor: TrackInteractor) : ViewModel() {
     val history: LiveData<List<Track>> get() = _history
 
     private var searchJob: Job? = null
+    private var debounceJob: Job? = null
+
+    fun searchTracksDebounced(query: String) {
+        debounceJob?.cancel()
+        debounceJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchTracks(query)
+        }
+    }
 
     fun searchTracks(query: String) {
         searchJob?.cancel()
@@ -50,5 +60,9 @@ class SearchViewModel(private val interactor: TrackInteractor) : ViewModel() {
             interactor.clearSearchHistory()
             getHistory()
         }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

@@ -8,7 +8,6 @@ import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -21,6 +20,10 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     val isPlaying: LiveData<Boolean> get() = _isPlaying
 
     private var updateJob: Job? = null
+
+    companion object {
+        private const val UPDATE_DELAY = 300L
+    }
 
     fun prepare(track: Track) {
         interactor.preparePlayer(track)
@@ -45,11 +48,12 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     private fun startTimer() {
+        updateJob?.cancel()
         updateJob = viewModelScope.launch {
-            while (isActive) {
+            while (true) {
                 if (interactor.isPlaying()) {
                     _currentTime.value = interactor.getCurrentPosition()
-                    delay(300)
+                    delay(UPDATE_DELAY)
                 } else {
                     _currentTime.value = formatTime(0)
                     _isPlaying.value = false
