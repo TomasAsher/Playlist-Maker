@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.Result
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TrackInteractor) : ViewModel() {
@@ -16,19 +19,23 @@ class SearchViewModel(private val interactor: TrackInteractor) : ViewModel() {
     private val _history = MutableLiveData<List<Track>>()
     val history: LiveData<List<Track>> get() = _history
 
-    private var lastSearchQuery: String? = null
+    private var searchJob: Job? = null
 
     fun searchTracks(query: String) {
-        lastSearchQuery = query
-        viewModelScope.launch {
-            _searchResult.value = interactor.searchTracks(query)
-        }
+        searchJob?.cancel()
+        searchJob = interactor.searchTracks(query)
+            .onEach { result ->
+                _searchResult.value = result
+            }
+            .launchIn(viewModelScope)
     }
 
     fun getHistory() {
-        viewModelScope.launch {
-            _history.value = interactor.getSearchHistory()
-        }
+        interactor.getSearchHistory()
+            .onEach { history ->
+                _history.value = history
+            }
+            .launchIn(viewModelScope)
     }
 
     fun saveToHistory(track: Track) {

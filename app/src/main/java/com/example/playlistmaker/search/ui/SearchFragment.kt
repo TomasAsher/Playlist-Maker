@@ -18,6 +18,7 @@ import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.Result
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -169,7 +170,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 currentQuery = s?.toString() ?: ""
 
                 if (s?.isNotEmpty() == true) {
-                    searchJob = kotlinx.coroutines.MainScope().launch {
+                    searchJob = MainScope().launch {
                         delay(SEARCH_DEBOUNCE_DELAY)
                         showProgress()
                         viewModel.searchTracks(s.toString())
