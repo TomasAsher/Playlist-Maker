@@ -17,9 +17,6 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.Result
 import com.example.playlistmaker.search.domain.models.Track
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.HttpException
 import java.io.IOException
@@ -30,7 +27,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var searchAdapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
-    private var searchJob: Job? = null
 
     private var currentQuery: String = ""
 
@@ -164,16 +160,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 updateClearButtonVisibility(s)
-                searchJob?.cancel()
 
                 currentQuery = s?.toString() ?: ""
 
                 if (s?.isNotEmpty() == true) {
-                    searchJob = kotlinx.coroutines.MainScope().launch {
-                        delay(SEARCH_DEBOUNCE_DELAY)
-                        showProgress()
-                        viewModel.searchTracks(s.toString())
-                    }
+                    showProgress()
+                    viewModel.searchTracksDebounced(s.toString())
                 } else {
                     searchAdapter.updateTracks(emptyList())
                     binding.noResultsPlaceholder.isVisible = false
@@ -246,14 +238,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        searchJob?.cancel()
         _binding = null
     }
 
     companion object {
         fun newInstance() = SearchFragment()
 
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val KEY_CURRENT_QUERY = "current_query"
     }
 }
